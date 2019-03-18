@@ -57,6 +57,7 @@ public class ObjectCreatorController {
     private Object obj;
     private ArrayList<Object> objArr = new ArrayList<Object>();
     private Object parentObj;
+
     public void initialize(){
         File[] classFile = ObjectCreatorReflective.getClasses();
         for(File f : classFile){
@@ -164,7 +165,7 @@ public class ObjectCreatorController {
                 System.out.println("Could not access field");
             }
             catch (IllegalArgumentException | UnsupportedOperationException c) {
-                ObjectCreatorReflective.throwError(field);
+                ObjectCreatorReflective.throwRangeError(field);
                 fieldText.setText(field.get(classObj).toString());
             }
         updateDisplayArea(classObj, obj);
@@ -188,18 +189,7 @@ public class ObjectCreatorController {
             fieldText2.setText("");
         }
         else{
-            BorderPane borderPane = new BorderPane();
-            Text warning = new Text("\n\nObject already exists!");
-            warning.setFont(Font.font(24));
-            warning.setFont(Font.font("Comic Sans"));;
-            warning.setTextAlignment(TextAlignment.CENTER);
-            borderPane.getChildren().add(warning);
-            Scene scene = new Scene(borderPane, 230, 50);
-            scene.setFill(Color.RED);
-            Stage stage = new Stage();
-            stage.setScene(scene);
-            stage.setTitle("ERROR");
-            stage.show();
+            ObjectCreatorReflective.throwExistError();
         }
 
     }
@@ -238,19 +228,7 @@ public class ObjectCreatorController {
                     objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + field.get(ohj) + "\n");
                 }
             } catch (IndexOutOfBoundsException e) {
-                BorderPane borderPane = new BorderPane();
-                Text warning = new Text("\n\nYou've been clicking out of bounds");
-                warning.setFont(Font.font(24));
-                warning.setFont(Font.font("Comic Sans"));
-                ;
-                warning.setTextAlignment(TextAlignment.CENTER);
-                borderPane.getChildren().add(warning);
-                Scene scene = new Scene(borderPane, 230, 50);
-                scene.setFill(Color.RED);
-                Stage stage = new Stage();
-                stage.setScene(scene);
-                stage.setTitle("ERROR");
-                stage.show();
+                ObjectCreatorReflective.throwIndexError();
             }
         }
     }

@@ -125,7 +125,7 @@ public class ObjectCreatorReflective {
 
     }
 
-    public static void throwError(Field field) {
+    public static void throwRangeError(Field field) {
         BorderPane borderPane = new BorderPane();
         Text warning = new Text("\n\nValue out of range for type: " + field.getType());
         warning.setFont(Font.font(24));
@@ -139,5 +139,35 @@ public class ObjectCreatorReflective {
         stage.setTitle("ERROR");
         stage.show();
 
+    }
+
+    public static void throwExistError(){
+        BorderPane borderPane = new BorderPane();
+        Text warning = new Text("\n\nObject already exists!");
+        warning.setFont(Font.font(24));
+        warning.setFont(Font.font("Comic Sans"));;
+        warning.setTextAlignment(TextAlignment.CENTER);
+        borderPane.getChildren().add(warning);
+        Scene scene = new Scene(borderPane, 230, 50);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("ERROR");
+        stage.show();
+    }
+
+    public static void throwIndexError() {
+        BorderPane borderPane = new BorderPane();
+        Text warning = new Text("\n\nYou've been clicking out of bounds");
+        warning.setFont(Font.font(24));
+        warning.setFont(Font.font("Comic Sans"));
+        warning.setTextAlignment(TextAlignment.CENTER);
+        borderPane.getChildren().add(warning);
+        Scene scene = new Scene(borderPane, 230, 50);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("ERROR");
+        stage.show();
     }
 }
