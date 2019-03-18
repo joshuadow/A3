@@ -16,6 +16,24 @@ import java.io.FilenameFilter;
 import java.lang.reflect.Field;
 
 public class ObjectCreatorReflective {
+    private static String PARENT_OBJ;
+
+    public static int getRecurseCounter() {
+        return recurseCounter;
+    }
+
+    public static void setRecurseCounter(int recurseCounter) {
+        ObjectCreatorReflective.recurseCounter = recurseCounter;
+    }
+
+    private static int recurseCounter = 0;
+    public static String getPARENT_OBJ() {
+        return PARENT_OBJ;
+    }
+
+    public static void setPARENT_OBJ(String objname) {
+        ObjectCreatorReflective.PARENT_OBJ = objname;
+    }
 
     public ObjectCreatorReflective(){}
 
@@ -40,11 +58,16 @@ public class ObjectCreatorReflective {
         });
     }
 
-    public static void notPrimitive(Field field, Object obj){
+    public static void notPrimitive(Field field, Object obj) throws IllegalAccessException {
+        String test = field.getType().toString();
+        if(test.equals(getPARENT_OBJ())){
+            setRecurseCounter(getRecurseCounter() + 1);
+        }
+        if(test.equals(getPARENT_OBJ()) && getRecurseCounter() > 1) { return;}
         for(Field f : field.getType().getDeclaredFields()) {
             f.setAccessible(true);
             if(!f.getType().isPrimitive()){
-
+                notPrimitive(f, obj);
             }
             else {
                 VBox vb = new VBox();
@@ -76,14 +99,18 @@ public class ObjectCreatorReflective {
                             }
                             //primitiveCheck
                             if (f.getType().isPrimitive()) {
-                                parseFields(f, field.get(obj), textArea.getText());
+                                if(getRecurseCounter() < 2)
+                                    parseFields(f, field.get(obj), textArea.getText());
+                                else
+                                    System.out.println(f + ", " + f.get(field));
+                                    parseFields(f, obj.getClass().getField(f.getName()), textArea.getText());
                             } else if (f.getType().isArray()) {
 
                             } else if (!f.getType().isPrimitive()) {
 
                             }
                             stage.close();
-                        } catch (IllegalAccessException e) {
+                        } catch (IllegalAccessException | NoSuchFieldException e) {
                             e.printStackTrace();
                         }
                     }
@@ -94,6 +121,7 @@ public class ObjectCreatorReflective {
 
     public static void parseFields(Field field, Object obj, String newStr) throws IllegalAccessException {
         Class t = field.getType();
+        System.out.println(t.toString());
         if (t.getName().equals("int"))
             field.setInt(obj, Integer.parseInt(newStr));
         else if (t.getName().equals("byte"))

@@ -107,9 +107,7 @@ public class ObjectCreatorController {
                 }
                 try {
                     recurseFields(newValue);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
+                } catch (NoSuchFieldException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
             }
@@ -131,6 +129,7 @@ public class ObjectCreatorController {
 
         }
         else if(!field.getType().isPrimitive()){
+            ObjectCreatorReflective.setPARENT_OBJ(obj.getClass().toString());
             ObjectCreatorReflective.notPrimitive(field, obj);
         }
     }
