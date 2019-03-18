@@ -18,6 +18,7 @@ public class primitivesOnly {
         aLong = 100000000;
         aFloat = 999999999;
         aBoolean = true;
+        r = new referenceToOthers();
     }
 
     public primitivesOnly(int i, char c, byte b, short s, long l, float f, double d, boolean bo){

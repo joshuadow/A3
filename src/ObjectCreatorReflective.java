@@ -102,15 +102,14 @@ public class ObjectCreatorReflective {
                                 if(getRecurseCounter() < 2)
                                     parseFields(f, field.get(obj), textArea.getText());
                                 else
-                                    System.out.println(f + ", " + f.get(field));
-                                    parseFields(f, obj.getClass().getField(f.getName()), textArea.getText());
+                                    parseFields(f, obj, textArea.getText());
                             } else if (f.getType().isArray()) {
 
                             } else if (!f.getType().isPrimitive()) {
 
                             }
                             stage.close();
-                        } catch (IllegalAccessException | NoSuchFieldException e) {
+                        } catch (IllegalAccessException e) {
                             e.printStackTrace();
                         }
                     }
@@ -121,7 +120,6 @@ public class ObjectCreatorReflective {
 
     public static void parseFields(Field field, Object obj, String newStr) throws IllegalAccessException {
         Class t = field.getType();
-        System.out.println(t.toString());
         if (t.getName().equals("int"))
             field.setInt(obj, Integer.parseInt(newStr));
         else if (t.getName().equals("byte"))
