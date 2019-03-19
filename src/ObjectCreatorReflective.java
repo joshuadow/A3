@@ -57,7 +57,7 @@ public class ObjectCreatorReflective {
         field.set(obj, newField);
     }
 
-    private static boolean fieldNamesEqual(Object obj, Object parentObj) {
+    public static boolean fieldNamesEqual(Object obj, Object parentObj) {
         Field[] objField = obj.getClass().getDeclaredFields();
         Field[] parentObjField = parentObj.getClass().getDeclaredFields();
         boolean result = false;

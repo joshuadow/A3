@@ -15,14 +15,21 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 public class ObjectCreatorController {
@@ -58,16 +65,12 @@ public class ObjectCreatorController {
     private Object obj;
     private ArrayList<Object> objArr = new ArrayList<Object>();
     private Object parentObj;
+    private ArrayList<File> classesToLoad;
 
     public void initialize(){
         createHelpDialog();
-        File[] classFile = Helper.getClasses();
-        for(File f : classFile){
-            String s = f.getName().replaceFirst(".class", "");
-            if(s.equals("ObjectCreator") || s.equals("Serializer") || s.equals("Visualizer") || s.equals("Deserializer") ||
-            s.contains("ObjectCreatorController") || s.contains("ObjectCreatorReflective") || s.contains("Helper")){ continue;}
-            classBox.getItems().add(s);
-        }
+        classesToLoad = Helper.getClasses();
+        updateClassBox(classesToLoad);
         objDisplay.setText("Objects:");
         objDisplay.setEditable(false);
         objDisplayData.setEditable(false);
@@ -122,7 +125,17 @@ public class ObjectCreatorController {
 
     }
 
-    private void createHelpDialog() {
+    private void updateClassBox(ArrayList<File> classesToLoad) {
+        classBox.getItems().clear();
+        for(File f : classesToLoad){
+            String s = f.getName().replaceFirst(".class", "");
+            if(s.equals("ObjectCreator") || s.equals("Serializer") || s.equals("Visualizer") || s.equals("Deserializer") ||
+                    s.contains("ObjectCreatorController") || s.contains("ObjectCreatorReflective") || s.contains("Helper")){ continue;}
+            classBox.getItems().add(s);
+        }
+    }
+
+    public void createHelpDialog() {
         VBox vb = new VBox();
         Text getInfo = new Text("\n\nWelcome To The Serializer/Deserializer Program!\n" +
                 "I am a help dialog designed to guide you through the steps of working this program\n\n" +
@@ -367,5 +380,22 @@ public class ObjectCreatorController {
         stage.setScene(scene);
         stage.setTitle("ERROR");
         stage.show();
+    }
+
+    public void importClass(ActionEvent actionEvent) throws IOException {
+        Stage stage = new Stage();
+        FileChooser fc = new FileChooser();
+        File file = fc.showOpenDialog(stage);
+        Path text = null;
+
+        if (file != null) {
+            text = file.toPath();
+        }
+        System.out.println(text);
+        int index = text.toString().lastIndexOf("/");
+        String fileName = text.toString().substring(index+1);
+        Path temp = Files.copy(text,Paths.get(Helper.getMyDir()+fileName), StandardCopyOption.REPLACE_EXISTING);
+        classesToLoad.add(new File(fileName));
+        updateClassBox(classesToLoad);
     }
 }

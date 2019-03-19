@@ -33,7 +33,20 @@ class ObjectCreatorReflectiveTest {
         Object obj = classObj.getConstructor(new Class[] {}).newInstance();
         Field cone = classObj.getDeclaredField("c1");
         cone.setAccessible(true);
-        ObjectCreatorReflective.notPrimitive(cone, obj, obj, 0);
+        Class classObj2 = Class.forName(cone.getType().getName());
+        Object obj2 = classObj2.getConstructor(new Class[] {}).newInstance();
+        Field f = classObj2.getDeclaredField("c2");
+        f.setAccessible(true);
+        cone.set(obj, obj2);
+        assertTrue(true);
+    }
 
+    @Test
+    public void testFieldNamesEqual(){
+        int i = 0;
+        int j = 0;
+        byte b = 0;
+        assertFalse(ObjectCreatorReflective.fieldNamesEqual(i,b));
+        assertTrue(ObjectCreatorReflective.fieldNamesEqual(i,j));
     }
 }
