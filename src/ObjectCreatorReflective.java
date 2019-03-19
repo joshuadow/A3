@@ -33,25 +33,43 @@ public class ObjectCreatorReflective {
     public ObjectCreatorReflective(){}
 
 
-    public static void notPrimitive(Field field, Object obj) throws IllegalAccessException,
+    public static void notPrimitive(Field field, Object obj, Object parentObj, int counter) throws IllegalAccessException,
             NoSuchMethodException, InvocationTargetException, InstantiationException, ClassNotFoundException {
         Class newCO = Class.forName(field.getType().getName());
         Object newField = newCO.getConstructor(new Class[] {}).newInstance();
         for(Field f : newField.getClass().getDeclaredFields()) {
             f.setAccessible(true);
             if(!f.getType().isPrimitive()){
-                if(OBJ_CHECKED.contains(newCO))
+                String fieldType = field.getType().getName();
+                String fType = f.getType().getName();
+                String objType = obj.getClass().getTypeName();
+                if(counter != 0 && fType.equals(objType))
                     continue;
                 else {
-                    OBJ_CHECKED.add(newCO);
-                    notPrimitive(f, newField);
+                    counter++;
+                    notPrimitive(f, newField, parentObj, counter);
                 }
             }
             else {
-                ObjectCreatorController.createPopUp(f, newField);
+                ObjectCreatorController.createPopUp(f, newField, obj);
             }
         }
         field.set(obj, newField);
+    }
+
+    private static boolean fieldNamesEqual(Object obj, Object parentObj) {
+        Field[] objField = obj.getClass().getDeclaredFields();
+        Field[] parentObjField = parentObj.getClass().getDeclaredFields();
+        boolean result = false;
+        if(objField.length == parentObjField.length){
+            for(int i = 0; i < objField.length; i++){
+                if(objField[i].getName().equals(parentObjField[i].getName()))
+                    result = true;
+                else
+                    result = false;
+            }
+        }
+        return result;
     }
 
     public static void parseFields(Field field, Object obj, String newStr) throws IllegalAccessException {

@@ -24,4 +24,16 @@ class ObjectCreatorReflectiveTest {
       assertTrue(true);
 
     }
+
+    @Test
+    public void testCircularReference() throws ClassNotFoundException, NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
+
+        Class classObj = Class.forName("CircularTwo");
+        Object obj = classObj.getConstructor(new Class[] {}).newInstance();
+        Field cone = classObj.getDeclaredField("c1");
+        cone.setAccessible(true);
+        ObjectCreatorReflective.notPrimitive(cone, obj, obj, 0);
+
+    }
 }

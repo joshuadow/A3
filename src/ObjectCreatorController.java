@@ -131,11 +131,11 @@ public class ObjectCreatorController {
 
         }
         else if(!field.getType().isPrimitive()){
-            ObjectCreatorReflective.notPrimitive(field, obj);
+            ObjectCreatorReflective.notPrimitive(field, obj, obj, 0);
         }
     }
 
-    public static void createPopUp(Field f, Object field){
+    public static void createPopUp(Field f, Object field, Object obj){
         VBox vb = new VBox();
         Text getInfo = new Text("\n\nPlease enter a value for: " + f.getType() + " " + f.getName());
         getInfo.setFont(Font.font(24));
@@ -149,11 +149,11 @@ public class ObjectCreatorController {
         vb.getChildren().add(textArea);
         vb.getChildren().add(submit);
 
-        Scene scene = new Scene(vb, 300, 300);
+        Scene scene = new Scene(vb, 600, 400);
         scene.setFill(Color.RED);
         Stage stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle("ADD VALUES");
+        stage.setTitle("ADDING VALUES FOR: " + obj.getClass().getName() + " " + field.getClass().getName());
         stage.show();
 
         submit.setOnAction(new EventHandler<ActionEvent>() {
