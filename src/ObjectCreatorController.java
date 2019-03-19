@@ -59,11 +59,11 @@ public class ObjectCreatorController {
     private Object parentObj;
 
     public void initialize(){
-        File[] classFile = ObjectCreatorReflective.getClasses();
+        File[] classFile = Helper.getClasses();
         for(File f : classFile){
             String s = f.getName().replaceFirst(".class", "");
             if(s.equals("ObjectCreator") || s.equals("Serializer") || s.equals("Visualizer") || s.equals("Deserializer") ||
-            s.contains("ObjectCreatorController") || s.contains("ObjectCreatorReflective")){ continue;}
+            s.contains("ObjectCreatorController") || s.contains("ObjectCreatorReflective") || s.contains("Helper")){ continue;}
             classBox.getItems().add(s);
         }
         objDisplay.setText("Objects:");
@@ -107,15 +107,9 @@ public class ObjectCreatorController {
                 }
                 try {
                     recurseFields(newValue);
-                } catch (NoSuchFieldException | IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
+                } catch (NoSuchFieldException | IllegalAccessException |
+                        NoSuchMethodException | InvocationTargetException |
+                        InstantiationException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
             }
@@ -215,7 +209,7 @@ public class ObjectCreatorController {
                 System.out.println("Could not access field");
             }
             catch (IllegalArgumentException | UnsupportedOperationException c) {
-                ObjectCreatorReflective.throwRangeError(field);
+                throwRangeError(field);
                 fieldText.setText(field.get(classObj).toString());
             }
         updateDisplayArea(classObj, obj);
@@ -239,7 +233,7 @@ public class ObjectCreatorController {
             fieldText2.setText("");
         }
         else{
-            ObjectCreatorReflective.throwExistError();
+            throwExistError();
         }
 
     }
@@ -278,8 +272,54 @@ public class ObjectCreatorController {
                     objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + field.get(ohj) + "\n");
                 }
             } catch (IndexOutOfBoundsException e) {
-                ObjectCreatorReflective.throwIndexError();
+                throwIndexError();
             }
         }
+    }
+
+    public static void throwRangeError(Field field) {
+        BorderPane borderPane = new BorderPane();
+        Text warning = new Text("\n\nValue out of range for type: " + field.getType());
+        warning.setFont(Font.font(24));
+        warning.setFont(Font.font("Comic Sans"));;
+        warning.setTextAlignment(TextAlignment.CENTER);
+        borderPane.getChildren().add(warning);
+        Scene scene = new Scene(borderPane, 230, 50);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("ERROR");
+        stage.show();
+
+    }
+
+    public static void throwExistError(){
+        BorderPane borderPane = new BorderPane();
+        Text warning = new Text("\n\nObject already exists!");
+        warning.setFont(Font.font(24));
+        warning.setFont(Font.font("Comic Sans"));;
+        warning.setTextAlignment(TextAlignment.CENTER);
+        borderPane.getChildren().add(warning);
+        Scene scene = new Scene(borderPane, 230, 50);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("ERROR");
+        stage.show();
+    }
+
+    public static void throwIndexError() {
+        BorderPane borderPane = new BorderPane();
+        Text warning = new Text("\n\nYou've been clicking out of bounds");
+        warning.setFont(Font.font(24));
+        warning.setFont(Font.font("Comic Sans"));
+        warning.setTextAlignment(TextAlignment.CENTER);
+        borderPane.getChildren().add(warning);
+        Scene scene = new Scene(borderPane, 230, 50);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("ERROR");
+        stage.show();
     }
 }

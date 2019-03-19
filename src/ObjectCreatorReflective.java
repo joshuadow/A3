@@ -32,27 +32,6 @@ public class ObjectCreatorReflective {
 
     public ObjectCreatorReflective(){}
 
-    public static File[] getClasses(){
-
-        File currentDir = new File("./out/production/A3/");
-        return currentDir.listFiles(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                if(name.lastIndexOf('.')>0) {
-                    // get last index for '.' char
-                    int lastIndex = name.lastIndexOf('.');
-                    // get extension
-                    String str = name.substring(lastIndex);
-                    // match path name extension
-                    if(str.equals(".class")) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-        });
-    }
 
     public static void notPrimitive(Field field, Object obj) throws IllegalAccessException,
             NoSuchMethodException, InvocationTargetException, InstantiationException, ClassNotFoundException {
@@ -60,9 +39,6 @@ public class ObjectCreatorReflective {
         Object newField = newCO.getConstructor(new Class[] {}).newInstance();
         for(Field f : newField.getClass().getDeclaredFields()) {
             f.setAccessible(true);
-            /*
-            If not a primitive, I need to go in and create a new instance of the "thing"
-             */
             if(!f.getType().isPrimitive()){
                 if(OBJ_CHECKED.contains(newCO))
                     continue;
@@ -111,49 +87,4 @@ public class ObjectCreatorReflective {
 
     }
 
-    public static void throwRangeError(Field field) {
-        BorderPane borderPane = new BorderPane();
-        Text warning = new Text("\n\nValue out of range for type: " + field.getType());
-        warning.setFont(Font.font(24));
-        warning.setFont(Font.font("Comic Sans"));;
-        warning.setTextAlignment(TextAlignment.CENTER);
-        borderPane.getChildren().add(warning);
-        Scene scene = new Scene(borderPane, 230, 50);
-        scene.setFill(Color.RED);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("ERROR");
-        stage.show();
-
-    }
-
-    public static void throwExistError(){
-        BorderPane borderPane = new BorderPane();
-        Text warning = new Text("\n\nObject already exists!");
-        warning.setFont(Font.font(24));
-        warning.setFont(Font.font("Comic Sans"));;
-        warning.setTextAlignment(TextAlignment.CENTER);
-        borderPane.getChildren().add(warning);
-        Scene scene = new Scene(borderPane, 230, 50);
-        scene.setFill(Color.RED);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("ERROR");
-        stage.show();
-    }
-
-    public static void throwIndexError() {
-        BorderPane borderPane = new BorderPane();
-        Text warning = new Text("\n\nYou've been clicking out of bounds");
-        warning.setFont(Font.font(24));
-        warning.setFont(Font.font("Comic Sans"));
-        warning.setTextAlignment(TextAlignment.CENTER);
-        borderPane.getChildren().add(warning);
-        Scene scene = new Scene(borderPane, 230, 50);
-        scene.setFill(Color.RED);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.setTitle("ERROR");
-        stage.show();
-    }
 }

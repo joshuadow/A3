@@ -8,16 +8,6 @@ public class PrimitivesOnly {
     private double aDouble;
     private boolean aBoolean;
 
-    public ReferenceToOthers getR() {
-        return r;
-    }
-
-    public void setR(ReferenceToOthers r) {
-        this.r = r;
-    }
-
-    private ReferenceToOthers r;
-
     public PrimitivesOnly(){
         aDouble = 20.19;
         anInt = 0;

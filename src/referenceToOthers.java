@@ -1,6 +1,6 @@
-public class referenceToOthers {
-    private primitivesOnly p;
+public class ReferenceToOthers {
+    private PrimitivesOnly p;
 
-    public referenceToOthers(){
+    public ReferenceToOthers(){
     }
 }
