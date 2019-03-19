@@ -1,4 +1,4 @@
-public class primitivesOnly {
+public class PrimitivesOnly {
     private int anInt;
     private char aChar;
     private byte aByte;
@@ -7,9 +7,18 @@ public class primitivesOnly {
     private float aFloat;
     private double aDouble;
     private boolean aBoolean;
-    private referenceToOthers r;
 
-    public primitivesOnly(){
+    public ReferenceToOthers getR() {
+        return r;
+    }
+
+    public void setR(ReferenceToOthers r) {
+        this.r = r;
+    }
+
+    private ReferenceToOthers r;
+
+    public PrimitivesOnly(){
         aDouble = 20.19;
         anInt = 0;
         aChar = 'J';
@@ -18,10 +27,10 @@ public class primitivesOnly {
         aLong = 100000000;
         aFloat = 999999999;
         aBoolean = true;
-        r = new referenceToOthers();
+
     }
 
-    public primitivesOnly(int i, char c, byte b, short s, long l, float f, double d, boolean bo){
+    public PrimitivesOnly(int i, char c, byte b, short s, long l, float f, double d, boolean bo){
         this.anInt = i;
         this.aChar = c;
         this.aByte = b;
@@ -90,7 +99,7 @@ public class primitivesOnly {
 
     @Override
     public String toString() {
-        return "primitivesOnly{" +
+        return "PrimitivesOnly{" +
                 "anInt=" + anInt +
                 ", aChar=" + aChar +
                 ", aByte=" + aByte +

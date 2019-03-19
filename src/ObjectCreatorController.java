@@ -63,13 +63,13 @@ public class ObjectCreatorController {
         for(File f : classFile){
             String s = f.getName().replaceFirst(".class", "");
             if(s.equals("ObjectCreator") || s.equals("Serializer") || s.equals("Visualizer") || s.equals("Deserializer") ||
-            s.contains("ObjectCreatorController")){ continue;}
+            s.contains("ObjectCreatorController") || s.contains("ObjectCreatorReflective")){ continue;}
             classBox.getItems().add(s);
         }
         objDisplay.setText("Objects:");
         objDisplay.setEditable(false);
         objDisplayData.setEditable(false);
-        //classBox.getItems().add("primitivesOnly");
+        //classBox.getItems().add("PrimitivesOnly");
         classBox.valueProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue observable, String oldValue, String newValue) {
@@ -109,6 +109,14 @@ public class ObjectCreatorController {
                     recurseFields(newValue);
                 } catch (NoSuchFieldException | IllegalAccessException e) {
                     e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -116,7 +124,7 @@ public class ObjectCreatorController {
 
     }
 
-    public void recurseFields(String newValue) throws NoSuchFieldException, IllegalAccessException {
+    public void recurseFields(String newValue) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InstantiationException, InvocationTargetException, ClassNotFoundException {
         Field field = classObj.getDeclaredField(newValue);
         field.setAccessible(true);
         if(field.getType().isPrimitive()) {
@@ -129,9 +137,52 @@ public class ObjectCreatorController {
 
         }
         else if(!field.getType().isPrimitive()){
-            ObjectCreatorReflective.setPARENT_OBJ(obj.getClass().toString());
             ObjectCreatorReflective.notPrimitive(field, obj);
         }
+    }
+
+    public static void createPopUp(Field f, Object field){
+        VBox vb = new VBox();
+        Text getInfo = new Text("\n\nPlease enter a value for: " + f.getType() + " " + f.getName());
+        getInfo.setFont(Font.font(24));
+        getInfo.setFont(Font.font("Comic Sans"));
+        getInfo.setTextAlignment(TextAlignment.CENTER);
+        vb.getChildren().add(getInfo);
+        TextArea textArea = new TextArea();
+        textArea.setPromptText("Enter a value for: " + f.getName());
+        Button submit = new Button();
+        submit.setText("Enter Field");
+        vb.getChildren().add(textArea);
+        vb.getChildren().add(submit);
+
+        Scene scene = new Scene(vb, 300, 300);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("ADD VALUES");
+        stage.show();
+
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    if (textArea.getText().equals("")) {
+                        return;
+                    }
+                    //primitiveCheck
+                    if (f.getType().isPrimitive()) {
+                        ObjectCreatorReflective.parseFields(f, field, textArea.getText());
+                    } else if (f.getType().isArray()) {
+
+                    } else if (!f.getType().isPrimitive()) {
+
+                    }
+                    stage.close();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 

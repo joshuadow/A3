@@ -14,31 +14,27 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 public class ObjectCreatorReflective {
-    private static String PARENT_OBJ;
 
-    public static int getRecurseCounter() {
-        return recurseCounter;
+    public static ArrayList<Object> getObjChecked() {
+        return OBJ_CHECKED;
     }
 
-    public static void setRecurseCounter(int recurseCounter) {
-        ObjectCreatorReflective.recurseCounter = recurseCounter;
+    public static void setObjChecked(ArrayList<Object> objChecked) {
+        OBJ_CHECKED = objChecked;
     }
 
-    private static int recurseCounter = 0;
-    public static String getPARENT_OBJ() {
-        return PARENT_OBJ;
-    }
+    private static ArrayList<Object> OBJ_CHECKED = new ArrayList<>();
 
-    public static void setPARENT_OBJ(String objname) {
-        ObjectCreatorReflective.PARENT_OBJ = objname;
-    }
 
     public ObjectCreatorReflective(){}
 
     public static File[] getClasses(){
-        File currentDir = new File("./src/");
+
+        File currentDir = new File("./out/production/A3/");
         return currentDir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -58,64 +54,28 @@ public class ObjectCreatorReflective {
         });
     }
 
-    public static void notPrimitive(Field field, Object obj) throws IllegalAccessException {
-        String test = field.getType().toString();
-        if(test.equals(getPARENT_OBJ())){
-            setRecurseCounter(getRecurseCounter() + 1);
-        }
-        if(test.equals(getPARENT_OBJ()) && getRecurseCounter() > 1) { return;}
-        for(Field f : field.getType().getDeclaredFields()) {
+    public static void notPrimitive(Field field, Object obj) throws IllegalAccessException,
+            NoSuchMethodException, InvocationTargetException, InstantiationException, ClassNotFoundException {
+        Class newCO = Class.forName(field.getType().getName());
+        Object newField = newCO.getConstructor(new Class[] {}).newInstance();
+        for(Field f : newField.getClass().getDeclaredFields()) {
             f.setAccessible(true);
+            /*
+            If not a primitive, I need to go in and create a new instance of the "thing"
+             */
             if(!f.getType().isPrimitive()){
-                notPrimitive(f, obj);
+                if(OBJ_CHECKED.contains(newCO))
+                    continue;
+                else {
+                    OBJ_CHECKED.add(newCO);
+                    notPrimitive(f, newField);
+                }
             }
             else {
-                VBox vb = new VBox();
-                Text getInfo = new Text("\n\nPlease enter a value for: " + f.getType() + " " + f.getName());
-                getInfo.setFont(Font.font(24));
-                getInfo.setFont(Font.font("Comic Sans"));
-                getInfo.setTextAlignment(TextAlignment.CENTER);
-                vb.getChildren().add(getInfo);
-                TextArea textArea = new TextArea();
-                textArea.setPromptText("Enter a value for: " + f.getName());
-                Button submit = new Button();
-                submit.setText("Enter Field");
-                vb.getChildren().add(textArea);
-                vb.getChildren().add(submit);
-
-                Scene scene = new Scene(vb, 300, 300);
-                scene.setFill(Color.RED);
-                Stage stage = new Stage();
-                stage.setScene(scene);
-                stage.setTitle("ADD VALUES");
-                stage.show();
-
-                submit.setOnAction(new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent event) {
-                        try {
-                            if (textArea.getText().equals("")) {
-                                return;
-                            }
-                            //primitiveCheck
-                            if (f.getType().isPrimitive()) {
-                                if(getRecurseCounter() < 2)
-                                    parseFields(f, field.get(obj), textArea.getText());
-                                else
-                                    parseFields(f, obj, textArea.getText());
-                            } else if (f.getType().isArray()) {
-
-                            } else if (!f.getType().isPrimitive()) {
-
-                            }
-                            stage.close();
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
+                ObjectCreatorController.createPopUp(f, newField);
             }
         }
+        field.set(obj, newField);
     }
 
     public static void parseFields(Field field, Object obj, String newStr) throws IllegalAccessException {
