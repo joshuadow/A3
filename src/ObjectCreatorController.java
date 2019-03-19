@@ -3,6 +3,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -59,6 +60,7 @@ public class ObjectCreatorController {
     private Object parentObj;
 
     public void initialize(){
+        createHelpDialog();
         File[] classFile = Helper.getClasses();
         for(File f : classFile){
             String s = f.getName().replaceFirst(".class", "");
@@ -76,7 +78,9 @@ public class ObjectCreatorController {
                 if(newValue.equals(classBox.getPromptText())) { return;}
                 progBar.setProgress(0);
                 displayInfo.setText("Fields:\n");
+                fieldBox.setValue(fieldBox.getPromptText());
                 fieldBox.getItems().clear();
+                fieldText.setText("");
                 try {
                     classObj = Class.forName(classBox.getValue().toString());
                     obj = classObj.getConstructor(new Class[] {}).newInstance();
@@ -118,6 +122,47 @@ public class ObjectCreatorController {
 
     }
 
+    private void createHelpDialog() {
+        VBox vb = new VBox();
+        Text getInfo = new Text("\n\nWelcome To The Serializer/Deserializer Program!\n" +
+                "I am a help dialog designed to guide you through the steps of working this program\n\n" +
+                "Firstly, select your class from the first ComboBox. Note this program can take custom classes\n" +
+                "\tYou can import classes by clicking File -> Import Class\n\n" +
+                "You have the option of naming your object in the text area\n" +
+                "Select the field that you want to alter/set\n" +
+                "\tIf the field is a primitive just simply set the value in the text area below\n" +
+                "\tIf it is not a primitive, the program will prompt you with text boxes to enter values\n\n" +
+                "NOTE: IT IS CRUCIAL YOU CLICK SAVE FIELD IF YOU WANT CHANGES TO BE ACTIVATED\n\n" +
+                "Once all the fields you want to set are complete, click Create Object\n" +
+                "You have the option of inspecting already created object by double clicking on them in the top right most pane\n" +
+                "The area directly below this will display the information you are looking for\n" +
+                "To delete an already created object, simply double click on the object name and press the delete object button\n" +
+                "\n\nYou can recreate this dialog anytime by clicking Help -> Show Help");
+        getInfo.setFont(Font.font(24));
+        getInfo.setFont(Font.font("Comic Sans"));
+        getInfo.setTextAlignment(TextAlignment.CENTER);
+        vb.getChildren().add(getInfo);
+        Button submit = new Button();
+        submit.setAlignment(Pos.BASELINE_CENTER);
+        submit.setText("START");
+        vb.getChildren().add(submit);
+
+        Scene scene = new Scene(vb, 700, 400);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("WELCOME");
+        stage.show();
+        stage.setAlwaysOnTop(true);
+
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                    stage.close();
+            }
+        });
+    }
+
     public void recurseFields(String newValue) throws NoSuchFieldException, IllegalAccessException, NoSuchMethodException, InstantiationException, InvocationTargetException, ClassNotFoundException {
         Field field = classObj.getDeclaredField(newValue);
         field.setAccessible(true);
@@ -144,12 +189,13 @@ public class ObjectCreatorController {
         vb.getChildren().add(getInfo);
         TextArea textArea = new TextArea();
         textArea.setPromptText("Enter a value for: " + f.getName());
+        textArea.setMaxHeight(25);
         Button submit = new Button();
         submit.setText("Enter Field");
         vb.getChildren().add(textArea);
         vb.getChildren().add(submit);
 
-        Scene scene = new Scene(vb, 600, 400);
+        Scene scene = new Scene(vb, 600, 150);
         scene.setFill(Color.RED);
         Stage stage = new Stage();
         stage.setScene(scene);
