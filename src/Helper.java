@@ -1,6 +1,7 @@
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.lang.reflect.Array;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
@@ -40,5 +41,31 @@ public class Helper {
 
     public static String getFileInMyDir(){
         return fileInMyDir;
+    }
+
+    public static String getArr(String arrClassName) throws ClassNotFoundException {
+        String type = arrClassName.replace("[", "");
+        switch(type){
+            case "B":
+                return "java.lang.Byte";
+            case "C":
+                return "java.lang.Character";
+            case "D":
+                return "java.lang.Double";
+            case "F":
+                return "java.lang.Float";
+            case "I":
+                return "int";
+            case "J":
+                return "java.lang.Long";
+            case "S":
+                return "java.lang.Short";
+            case "Z":
+                return "java.lang.Boolean";
+            case "java.lang.String":
+                return "java.lang.String";
+            default:
+                return type.replace("L" ,"");
+        }
     }
 }

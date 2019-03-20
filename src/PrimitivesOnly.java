@@ -7,6 +7,7 @@ public class PrimitivesOnly {
     private float aFloat;
     private double aDouble;
     private boolean aBoolean;
+    private String aString;
 
     public PrimitivesOnly(){
         aDouble = 20.19;
@@ -17,6 +18,7 @@ public class PrimitivesOnly {
         aLong = 100000000;
         aFloat = 999999999;
         aBoolean = true;
+        aString = "josh";
 
     }
 
@@ -98,6 +100,7 @@ public class PrimitivesOnly {
                 ", aFloat=" + aFloat +
                 ", aDouble=" + aDouble +
                 ", aBoolean=" + aBoolean +
+                ", aString=" + aString +
                 '}';
     }
 }

@@ -3,4 +3,11 @@ public class ReferenceToOthers {
 
     public ReferenceToOthers(){
     }
+
+    @Override
+    public String toString() {
+        return "ReferenceToOthers{" +
+                "p=" + p +
+                '}';
+    }
 }

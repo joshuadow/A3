@@ -67,6 +67,68 @@ public class ObjectCreatorController {
     private Object parentObj;
     private ArrayList<File> classesToLoad;
 
+    public static Integer getTopLevelElements(){
+        VBox vb = new VBox();
+        Text getInfo = new Text("\n\nPlease enter the length of the dimension: \n");
+        getInfo.setFont(Font.font(24));
+        getInfo.setFont(Font.font("Comic Sans"));
+        getInfo.setTextAlignment(TextAlignment.CENTER);
+        vb.getChildren().add(getInfo);
+        TextArea textArea = new TextArea();
+        textArea.setPromptText("Enter an integer: ");
+        textArea.setMaxHeight(25);
+        Button submit = new Button();
+        submit.setText("Enter Integer");
+        vb.getChildren().add(textArea);
+        vb.getChildren().add(submit);
+
+        Scene scene = new Scene(vb, 600, 150);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("GETTING DIMENSIONS");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.close();
+            }
+        });
+        stage.showAndWait();
+        return Integer.parseInt(textArea.getText());
+    }
+    public static String getDimensionPopup(int i) {
+        VBox vb = new VBox();
+        Text getInfo = new Text("\n\nPlease enter what you want dimension: " + i + " to be\n");
+        getInfo.setFont(Font.font(24));
+        getInfo.setFont(Font.font("Comic Sans"));
+        getInfo.setTextAlignment(TextAlignment.CENTER);
+        vb.getChildren().add(getInfo);
+        TextArea textArea = new TextArea();
+        textArea.setPromptText("Enter an array of form: primitive,primitive,primitive,..." );
+        textArea.setMaxHeight(25);
+        Button submit = new Button();
+        submit.setText("Enter Field");
+        vb.getChildren().add(textArea);
+        vb.getChildren().add(submit);
+
+        Scene scene = new Scene(vb, 600, 150);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("GETTING DIMENSIONS");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.close();
+            }
+        });
+        stage.showAndWait();
+        return textArea.getText();
+    }
+
+    public static void throwArrayLengthError() {
+    }
+
     public void initialize(){
         createHelpDialog();
         classesToLoad = Helper.getClasses();
@@ -161,7 +223,6 @@ public class ObjectCreatorController {
         vb.getChildren().add(submit);
 
         Scene scene = new Scene(vb, 700, 400);
-        scene.setFill(Color.RED);
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("WELCOME");
@@ -185,8 +246,11 @@ public class ObjectCreatorController {
             } else
                 fieldText.setText(field.get(obj).toString());
         }
+        else if(field.getType().getName().equals("java.lang.String")){
+            fieldText.setText(field.get(obj).toString());
+        }
         else if(field.getType().isArray()){
-
+            ObjectCreatorReflective.isAnArray(field, obj);
         }
         else if(!field.getType().isPrimitive()){
             ObjectCreatorReflective.notPrimitive(field, obj, obj, 0);
@@ -225,10 +289,6 @@ public class ObjectCreatorController {
                     //primitiveCheck
                     if (f.getType().isPrimitive()) {
                         ObjectCreatorReflective.parseFields(f, field, textArea.getText());
-                    } else if (f.getType().isArray()) {
-
-                    } else if (!f.getType().isPrimitive()) {
-
                     }
                     stage.close();
                 } catch (IllegalAccessException e) {
@@ -391,7 +451,7 @@ public class ObjectCreatorController {
         if (file != null) {
             text = file.toPath();
         }
-        System.out.println(text);
+        if(!text.toString().contains(".class")) { importClass(actionEvent);}
         int index = text.toString().lastIndexOf("/");
         String fileName = text.toString().substring(index+1);
         Path temp = Files.copy(text,Paths.get(Helper.getMyDir()+fileName), StandardCopyOption.REPLACE_EXISTING);

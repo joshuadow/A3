@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
@@ -48,5 +49,28 @@ class ObjectCreatorReflectiveTest {
         byte b = 0;
         assertFalse(ObjectCreatorReflective.fieldNamesEqual(i,b));
         assertTrue(ObjectCreatorReflective.fieldNamesEqual(i,j));
+    }
+
+    @Test
+    public void testPrimitiveArray() throws ClassNotFoundException, NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
+        Class classobj = Class.forName("PrimitiveArray");
+        Object obj = classobj.getConstructor(new Class[] {}).newInstance();
+        Field field = classobj.getDeclaredField("intArr");
+        field.setAccessible(true);
+        String arrClassName = field.getType().getName();
+        int dimensions = 0;
+        String arrayClass = "I";
+        for(int i = 0; i < arrClassName.length(); i++){
+            if(arrClassName.charAt(i) == '[')
+                arrayClass = "[" + arrayClass;
+        }
+        Class arrcls = Class.forName(arrayClass);
+        int length = 4;
+        Object object = Array.newInstance(int.class, length);
+        for(int i = 0; i < length; i++){
+            Array.set(object, i, i*2);
+        }
+        field.set(obj, object);
     }
 }
