@@ -5,10 +5,9 @@ public class CircularOne {
 
     @Override
     public String toString() {
-        return "CircularOne{" +
-                "po=" + po +
-                ", rto=" + rto +
-                ", c2=" + c2 +
-                '}';
+        return "CircularOne: \n" +
+                "\tpo=" + po +
+                "\n\trto=" + rto +
+                "\n\tc2=" + c2;
     }
 }

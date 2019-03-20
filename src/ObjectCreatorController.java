@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ObjectCreatorController {
 
@@ -67,9 +68,9 @@ public class ObjectCreatorController {
     private Object parentObj;
     private ArrayList<File> classesToLoad;
 
-    public static Integer getTopLevelElements(){
+    public static Integer getTopLevelElements(int i){
         VBox vb = new VBox();
-        Text getInfo = new Text("\n\nPlease enter the length of the dimension: \n");
+        Text getInfo = new Text("\n\nPlease enter the length of the " + Helper.ordinal(i) + " array: \n");
         getInfo.setFont(Font.font(24));
         getInfo.setFont(Font.font("Comic Sans"));
         getInfo.setTextAlignment(TextAlignment.CENTER);
@@ -86,7 +87,7 @@ public class ObjectCreatorController {
         scene.setFill(Color.RED);
         Stage stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle("GETTING DIMENSIONS");
+        stage.setTitle("GETTING LENGTH");
         submit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -96,15 +97,15 @@ public class ObjectCreatorController {
         stage.showAndWait();
         return Integer.parseInt(textArea.getText());
     }
-    public static String getDimensionPopup(int i) {
+    public static String getDimensionPopup(int i, int j) {
         VBox vb = new VBox();
-        Text getInfo = new Text("\n\nPlease enter what you want dimension: " + i + " to be\n");
+        Text getInfo = new Text("\n\nPlease enter what you want index: " + i +"," + j + " to be\n");
         getInfo.setFont(Font.font(24));
         getInfo.setFont(Font.font("Comic Sans"));
         getInfo.setTextAlignment(TextAlignment.CENTER);
         vb.getChildren().add(getInfo);
         TextArea textArea = new TextArea();
-        textArea.setPromptText("Enter an array of form: primitive,primitive,primitive,..." );
+        textArea.setPromptText("Enter an array of form: obj,obj,...,obj" );
         textArea.setMaxHeight(25);
         Button submit = new Button();
         submit.setText("Enter Field");
@@ -127,6 +128,49 @@ public class ObjectCreatorController {
     }
 
     public static void throwArrayLengthError() {
+    }
+
+    public static void getPrimitiveValue(Field f, Object obj) {
+        VBox vb = new VBox();
+        Text getInfo = new Text("\n\nPlease enter a value for: " + f.getType() + " " + f.getName());
+        getInfo.setFont(Font.font(24));
+        getInfo.setFont(Font.font("Comic Sans"));
+        getInfo.setTextAlignment(TextAlignment.CENTER);
+        vb.getChildren().add(getInfo);
+        TextArea textArea = new TextArea();
+        textArea.setPromptText("Enter a value for: " + f.getName());
+        textArea.setMaxHeight(25);
+        Button submit = new Button();
+        submit.setText("Enter Field");
+        vb.getChildren().add(textArea);
+        vb.getChildren().add(submit);
+
+        Scene scene = new Scene(vb, 600, 150);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("ADDING VALUES FOR: " + obj.getClass().getName());
+
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    if (textArea.getText().equals("")) {
+                        return;
+                    }
+                    //primitiveCheck
+                    if (f.getType().isPrimitive()) {
+                        ObjectCreatorReflective.parseFields(f, obj, textArea.getText());
+                    }
+                    stage.close();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        stage.showAndWait();
+
+
     }
 
     public void initialize(){
@@ -253,7 +297,7 @@ public class ObjectCreatorController {
             ObjectCreatorReflective.isAnArray(field, obj);
         }
         else if(!field.getType().isPrimitive()){
-            ObjectCreatorReflective.notPrimitive(field, obj, obj, 0);
+            ObjectCreatorReflective.notPrimitive(field, obj, 0);
         }
     }
 
@@ -277,7 +321,7 @@ public class ObjectCreatorController {
         Stage stage = new Stage();
         stage.setScene(scene);
         stage.setTitle("ADDING VALUES FOR: " + obj.getClass().getName() + " " + field.getClass().getName());
-        stage.show();
+
 
         submit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -296,6 +340,7 @@ public class ObjectCreatorController {
                 }
             }
         });
+        stage.showAndWait();
     }
 
 
@@ -307,7 +352,55 @@ public class ObjectCreatorController {
             Field field = fieldarr[i];
             field.setAccessible(true);
             try {
-                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + field.get(obj) + "\n");
+                if(!field.getType().isArray())
+                    displayInfo.appendText(field.getType() + " " + field.getName() + " : " + field.get(obj) + "\n");
+                else {
+                    String name = field.getType().getName();
+                    if(name.equals("[I"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((int[])field.get(obj))+ "\n");
+                    else if(name.equals("[D"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((double[])field.get(obj))+ "\n");
+                    else if(name.equals("[S"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((short[])field.get(obj))+ "\n");
+                    else if(name.equals("[J"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((long[])field.get(obj))+ "\n");
+                    else if(name.equals("[B"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((byte[])field.get(obj))+ "\n");
+                    else if(name.equals("[C"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((char[])field.get(obj))+ "\n");
+                    else if(name.equals("[F"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((float[])field.get(obj))+ "\n");
+                    else if(name.equals("[Z"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((boolean[])field.get(obj))+ "\n");
+                    else if(name.equals("[[I"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((int[][])field.get(obj))+ "\n");
+                    else if(name.equals("[[D"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((double[][])field.get(obj))+ "\n");
+                    else if(name.equals("[[S"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((short[][])field.get(obj))+ "\n");
+                    else if(name.equals("[[J"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((long[][])field.get(obj))+ "\n");
+                    else if(name.equals("[[B"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((byte[][])field.get(obj))+ "\n");
+                    else if(name.equals("[[C"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((char[][])field.get(obj))+ "\n");
+                    else if(name.equals("[[F"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((float[][])field.get(obj))+ "\n");
+                    else if(name.equals("[[Z"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((boolean[][])field.get(obj))+ "\n");
+                    else if(name.equals("[Ljava.lang.String;"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((String[])field.get(obj))+ "\n");
+                    else if(name.equals("[[Ljava.lang.String;"))
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((String[][])field.get(obj))+ "\n");
+                    else
+                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((Object[])field.get(obj)) + "\n");
+
+
+
+
+
+
+                }
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }

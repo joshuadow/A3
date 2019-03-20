@@ -3,11 +3,13 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ObjectCreatorReflectiveTest {
 
+    Scanner input = new Scanner(System.in);
     @Test
     public void testReference() throws ClassNotFoundException, NoSuchMethodException,
             IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
@@ -72,5 +74,30 @@ class ObjectCreatorReflectiveTest {
             Array.set(object, i, i*2);
         }
         field.set(obj, object);
+    }
+
+    @Test
+    public void test4DArr(){
+        int[][][][] tensor = new int[5][4][3][2];
+        int[] dimArr = {5,4,3,2};
+        int currentDim = 0;
+        int[] state = {0,0,0,0};
+        recurseArr(tensor, dimArr, currentDim, state);
+
+    }
+    public void recurseArr(Object tensor, int[] dimArr, int currentDim,int[] state) {
+        if(currentDim == dimArr.length-1){
+            System.out.print("Enter an int");
+            for(int j = 0; j < state.length; j++) {
+               System.out.print(state[j] + ",");
+            }
+
+            int i = input.nextInt();
+        }
+        else{
+            currentDim++;
+            state[currentDim] = state[currentDim] + 1;
+            recurseArr(tensor, dimArr, currentDim, state);
+        }
     }
 }

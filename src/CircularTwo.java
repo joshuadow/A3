@@ -3,8 +3,7 @@ public class CircularTwo {
 
     @Override
     public String toString() {
-        return "CircularTwo{" +
-                "c1=" + c1 +
-                '}';
+        return "CircularTwo: \n" +
+                "\tc1=" + c1;
     }
 }

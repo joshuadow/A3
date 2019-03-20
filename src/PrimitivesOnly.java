@@ -91,16 +91,15 @@ public class PrimitivesOnly {
 
     @Override
     public String toString() {
-        return "PrimitivesOnly{" +
-                "anInt=" + anInt +
-                ", aChar=" + aChar +
-                ", aByte=" + aByte +
-                ", aShort=" + aShort +
-                ", aLong=" + aLong +
-                ", aFloat=" + aFloat +
-                ", aDouble=" + aDouble +
-                ", aBoolean=" + aBoolean +
-                ", aString=" + aString +
-                '}';
+        return "PrimitivesOnly: \n" +
+                "\tanInt=" + anInt +
+                "\n\taChar=" + aChar +
+                "\n\taByte=" + aByte +
+                "\n\taShort=" + aShort +
+                "\n\taLong=" + aLong +
+                "\n\taFloat=" + aFloat +
+                "\n\taDouble=" + aDouble +
+                "\n\taBoolean=" + aBoolean +
+                "\n\taString=" + aString;
     }
 }
