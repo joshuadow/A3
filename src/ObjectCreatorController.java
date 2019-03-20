@@ -68,9 +68,9 @@ public class ObjectCreatorController {
     private Object parentObj;
     private ArrayList<File> classesToLoad;
 
-    public static Integer getTopLevelElements(int i){
+    public static Integer getTopLevelElements(int i, Field f){
         VBox vb = new VBox();
-        Text getInfo = new Text("\n\nPlease enter the length of the " + Helper.ordinal(i) + " array: \n");
+        Text getInfo = new Text("\n\nPlease enter the length of the " + Helper.ordinal(i) + " dimension of" + f.getType().getName()+ " \n");
         getInfo.setFont(Font.font(24));
         getInfo.setFont(Font.font("Comic Sans"));
         getInfo.setTextAlignment(TextAlignment.CENTER);
@@ -87,25 +87,28 @@ public class ObjectCreatorController {
         scene.setFill(Color.RED);
         Stage stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle("GETTING LENGTH");
+        stage.setTitle("GETTING LENGTH OF DEPTH: " + i + " for " + f.getType().getName());
         submit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                stage.close();
+                if(textArea.getText().equals(""))
+                    return;
+                else
+                    stage.close();
             }
         });
         stage.showAndWait();
         return Integer.parseInt(textArea.getText());
     }
-    public static String getDimensionPopup(int i, int j) {
+    public static String getDimensionPopup(int i, int j, Field f) {
         VBox vb = new VBox();
-        Text getInfo = new Text("\n\nPlease enter what you want index: " + i +"," + j + " to be\n");
+        Text getInfo = new Text("\n\nPlease enter what you want index: " + i +"," + j + " of " + f.getType().getName()+ " to be\n");
         getInfo.setFont(Font.font(24));
         getInfo.setFont(Font.font("Comic Sans"));
         getInfo.setTextAlignment(TextAlignment.CENTER);
         vb.getChildren().add(getInfo);
         TextArea textArea = new TextArea();
-        textArea.setPromptText("Enter an array of form: obj,obj,...,obj" );
+        textArea.setPromptText("Enter field: " );
         textArea.setMaxHeight(25);
         Button submit = new Button();
         submit.setText("Enter Field");
@@ -116,7 +119,7 @@ public class ObjectCreatorController {
         scene.setFill(Color.RED);
         Stage stage = new Stage();
         stage.setScene(scene);
-        stage.setTitle("GETTING DIMENSIONS");
+        stage.setTitle("GETTING VALUE FOR: " + f.getType().getName());
         submit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {

@@ -91,8 +91,8 @@ public class PrimitivesOnly {
 
     @Override
     public String toString() {
-        return "PrimitivesOnly: \n" +
-                "\tanInt=" + anInt +
+        return "\nPrimitivesOnly: " +
+                "\n\tanInt=" + anInt +
                 "\n\taChar=" + aChar +
                 "\n\taByte=" + aByte +
                 "\n\taShort=" + aShort +

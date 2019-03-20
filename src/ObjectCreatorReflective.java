@@ -36,6 +36,10 @@ public class ObjectCreatorReflective {
 
     public static void notPrimitive(Field field, Object obj, int counter) throws IllegalAccessException,
             NoSuchMethodException, InvocationTargetException, InstantiationException, ClassNotFoundException {
+        if(field.getType().isArray()) {
+            isAnArray(field, obj);
+            return;
+        }
         Class newCO = Class.forName(field.getType().getName());
         Object newField = newCO.getConstructor(new Class[] {}).newInstance();
         for(Field f : newField.getClass().getDeclaredFields()) {
@@ -121,7 +125,7 @@ public class ObjectCreatorReflective {
             if(arrClassName.charAt(i) == '[')
                 dimensions++;
         }
-        int length = ObjectCreatorController.getTopLevelElements(1);
+        int length = ObjectCreatorController.getTopLevelElements(1, field);
         Object object = null;
         if(dimensions == 1) {
             arrClassName = arrClassName.substring(1);
@@ -151,38 +155,38 @@ public class ObjectCreatorReflective {
 
             for (int i = 0; i < length; i++) {
                 if (arrClassName.equals("I")) {
-                    String j = ObjectCreatorController.getDimensionPopup(0, i);
+                    String j = ObjectCreatorController.getDimensionPopup(0, i, field);
                     Array.set(object, i, Integer.parseInt(j));
                 } else if (arrClassName.equals("B")){
-                    String j = ObjectCreatorController.getDimensionPopup(0,i);
+                    String j = ObjectCreatorController.getDimensionPopup(0,i,field);
                     Array.set(object, i, Byte.parseByte(j));
                 }
                 else if (arrClassName.equals("C")){
-                    String j = ObjectCreatorController.getDimensionPopup(0,i);
+                    String j = ObjectCreatorController.getDimensionPopup(0,i,field);
                     Array.set(object, i, j.charAt(0));
                 }
                 else if (arrClassName.equals("J")){
-                    String j = ObjectCreatorController.getDimensionPopup(0,i);
+                    String j = ObjectCreatorController.getDimensionPopup(0,i,field);
                     Array.set(object, i, Long.parseLong(j));
                 }
                 else if (arrClassName.equals("S")){
-                    String j = ObjectCreatorController.getDimensionPopup(0,i);
+                    String j = ObjectCreatorController.getDimensionPopup(0,i,field);
                     Array.set(object, i, Short.parseShort(j));
                 }
                 else if (arrClassName.equals("Z")){
-                    String j = ObjectCreatorController.getDimensionPopup(0,i);
+                    String j = ObjectCreatorController.getDimensionPopup(0,i,field);
                     Array.set(object, i, Boolean.parseBoolean(j));
                 }
                 else if (arrClassName.equals("D")){
-                    String j = ObjectCreatorController.getDimensionPopup(0,i);
+                    String j = ObjectCreatorController.getDimensionPopup(0,i,field);
                     Array.set(object, i, Double.parseDouble(j));
                 }
                 else if (arrClassName.equals("F")){
-                    String j = ObjectCreatorController.getDimensionPopup(0,i);
+                    String j = ObjectCreatorController.getDimensionPopup(0,i,field);
                     Array.set(object, i, Float.parseFloat(j));
                 }
                 else if (arrClassName.equals("Ljava.lang.String;")){
-                    String j = ObjectCreatorController.getDimensionPopup(0,i);
+                    String j = ObjectCreatorController.getDimensionPopup(0,i,field);
                     Array.set(object, i, j);
                 }
                 else{
@@ -193,6 +197,8 @@ public class ObjectCreatorReflective {
                         f.setAccessible(true);
                         if(f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String"))
                             ObjectCreatorController.getPrimitiveValue(f, objInArr);
+                        else if(f.getType().isArray())
+                            isAnArray(f, objInArr);
                         else {
                             notPrimitive(f, objInArr, 0);
                         }
@@ -202,7 +208,7 @@ public class ObjectCreatorReflective {
             }
         }
         else if (dimensions == 2){
-            int length2 = ObjectCreatorController.getTopLevelElements(2);
+            int length2 = ObjectCreatorController.getTopLevelElements(2,field);
             if (arrClassName.equals("[[I"))
                 object = Array.newInstance(int.class, length, length2);
             else if (arrClassName.equals("[[B"))
@@ -246,7 +252,7 @@ public class ObjectCreatorReflective {
                 else
                     object2 = Array.newInstance(field.getType(), length2);
                 for(int j = 0; j < length2; j++){
-                    String result = ObjectCreatorController.getDimensionPopup(i,j);
+                    String result = ObjectCreatorController.getDimensionPopup(i,j,field);
                     if (arrClassName.equals("[[I"))
                         Array.set(object2, j, Integer.parseInt(result));
                     else if (arrClassName.equals("[[B"))

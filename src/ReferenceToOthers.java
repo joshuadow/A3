@@ -6,7 +6,7 @@ public class ReferenceToOthers {
 
     @Override
     public String toString() {
-        return "ReferenceToOthers: \n" +
-                "\tp=" + p;
+        return "\nReferenceToOthers: " +
+                "\n\tp=" + p;
     }
 }

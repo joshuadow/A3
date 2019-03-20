@@ -1,20 +1,17 @@
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 public class PrimitiveArray {
     private int[] intArr = {1,2,3};
     private int[][] int2DArr = {{1,2},{3,4}};
-    PrimitivesOnly p0;
-    private String[] strArr = {"test", "test2"};
-    private String[][] str2DArr;
-    private PrimitivesOnly[] primOnlyArr = {p0, p0};
-    private String aString = "josh";
-    private char[] charArr = {'d','o','w'};
+    private PrimitivesOnly[] primOnlyArr = {new PrimitivesOnly(), new PrimitivesOnly()};
 
+    public PrimitiveArray(){}
     @Override
     public String toString() {
-        return "PrimitiveArray :\n" +
-                "\tintArr=" + Arrays.toString(intArr) +
-                "\n\taString='" + aString + '\'' +
-                "\n\tcharArr=" + Arrays.toString(charArr);
+        return "\nPrimitiveArray :" +
+                "\n\tintArr=" + Arrays.toString(intArr) +
+                "\n\tint2DArr=" + Arrays.deepToString(int2DArr) + '\'' +
+                "\n\tprimOnlyArr=" + Arrays.deepToString(primOnlyArr);
     }
 }
