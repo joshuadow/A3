@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Scanner;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,27 +77,356 @@ class ObjectCreatorReflectiveTest {
     }
 
     @Test
-    public void test4DArr(){
-        int[][][][] tensor = new int[5][4][3][2];
-        int[] dimArr = {5,4,3,2};
-        int currentDim = 0;
-        int[] state = {0,0,0,0};
-        recurseArr(tensor, dimArr, currentDim, state);
-
-    }
-    public void recurseArr(Object tensor, int[] dimArr, int currentDim,int[] state) {
-        if(currentDim == dimArr.length-1){
-            System.out.print("Enter an int");
-            for(int j = 0; j < state.length; j++) {
-               System.out.print(state[j] + ",");
+    public void testCollections() {
+        Queue<Integer> queue = new Queue<Integer>() {
+            @Override
+            public boolean add(Integer integer) {
+                return false;
             }
 
-            int i = input.nextInt();
-        }
-        else{
-            currentDim++;
-            state[currentDim] = state[currentDim] + 1;
-            recurseArr(tensor, dimArr, currentDim, state);
-        }
+            @Override
+            public boolean offer(Integer integer) {
+                return false;
+            }
+
+            @Override
+            public Integer remove() {
+                return null;
+            }
+
+            @Override
+            public Integer poll() {
+                return null;
+            }
+
+            @Override
+            public Integer element() {
+                return null;
+            }
+
+            @Override
+            public Integer peek() {
+                return null;
+            }
+
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return false;
+            }
+
+            @Override
+            public Iterator<Integer> iterator() {
+                return null;
+            }
+
+            @Override
+            public Object[] toArray() {
+                return new Object[0];
+            }
+
+            @Override
+            public <T> T[] toArray(T[] a) {
+                return null;
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                return false;
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                return false;
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends Integer> c) {
+                return false;
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> c) {
+                return false;
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> c) {
+                return false;
+            }
+
+            @Override
+            public void clear() {
+
+            }
+        };
+        System.out.println("Super class: " + queue.getClass().getGenericSuperclass());
+        System.out.println("Name: " + queue.getClass());
+        System.out.println("Type Name: " + Arrays.deepToString(queue.getClass().getGenericInterfaces()));
+        System.out.println("------------------------------------");
+        Collection<Integer> collection = new Collection<Integer>() {
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return false;
+            }
+
+            @Override
+            public Iterator<Integer> iterator() {
+                return null;
+            }
+
+            @Override
+            public Object[] toArray() {
+                return new Object[0];
+            }
+
+            @Override
+            public <T> T[] toArray(T[] a) {
+                return null;
+            }
+
+            @Override
+            public boolean add(Integer integer) {
+                return false;
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                return false;
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                return false;
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends Integer> c) {
+                return false;
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> c) {
+                return false;
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> c) {
+                return false;
+            }
+
+            @Override
+            public void clear() {
+
+            }
+        };
+        System.out.println("Super class: " + collection.getClass().getGenericSuperclass());
+        System.out.println("Name: " + collection.getClass().getName());
+        System.out.println("Type Name: " + Arrays.deepToString(collection.getClass().getGenericInterfaces()));
+        System.out.println("------------------------------------");
+        List<Integer> list = new List<Integer>() {
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                return false;
+            }
+
+            @Override
+            public Iterator<Integer> iterator() {
+                return null;
+            }
+
+            @Override
+            public Object[] toArray() {
+                return new Object[0];
+            }
+
+            @Override
+            public <T> T[] toArray(T[] a) {
+                return null;
+            }
+
+            @Override
+            public boolean add(Integer integer) {
+                return false;
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                return false;
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                return false;
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends Integer> c) {
+                return false;
+            }
+
+            @Override
+            public boolean addAll(int index, Collection<? extends Integer> c) {
+                return false;
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> c) {
+                return false;
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> c) {
+                return false;
+            }
+
+            @Override
+            public void clear() {
+
+            }
+
+            @Override
+            public Integer get(int index) {
+                return null;
+            }
+
+            @Override
+            public Integer set(int index, Integer element) {
+                return null;
+            }
+
+            @Override
+            public void add(int index, Integer element) {
+
+            }
+
+            @Override
+            public Integer remove(int index) {
+                return null;
+            }
+
+            @Override
+            public int indexOf(Object o) {
+                return 0;
+            }
+
+            @Override
+            public int lastIndexOf(Object o) {
+                return 0;
+            }
+
+            @Override
+            public ListIterator<Integer> listIterator() {
+                return null;
+            }
+
+            @Override
+            public ListIterator<Integer> listIterator(int index) {
+                return null;
+            }
+
+            @Override
+            public List<Integer> subList(int fromIndex, int toIndex) {
+                return null;
+            }
+        };
+        System.out.println("Super class: " + list.getClass().getGenericSuperclass());
+        System.out.println("Name: " + list.getClass().getName());
+        System.out.println("Type Name: " + Arrays.deepToString(list.getClass().getGenericInterfaces()));
+        System.out.println("------------------------------------");
+        Map<Integer, Integer> map = new Map<Integer, Integer>() {
+            @Override
+            public int size() {
+                return 0;
+            }
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public boolean containsKey(Object key) {
+                return false;
+            }
+
+            @Override
+            public boolean containsValue(Object value) {
+                return false;
+            }
+
+            @Override
+            public Integer get(Object key) {
+                return null;
+            }
+
+            @Override
+            public Integer put(Integer key, Integer value) {
+                return null;
+            }
+
+            @Override
+            public Integer remove(Object key) {
+                return null;
+            }
+
+            @Override
+            public void putAll(Map<? extends Integer, ? extends Integer> m) {
+
+            }
+
+            @Override
+            public void clear() {
+
+            }
+
+            @Override
+            public Set<Integer> keySet() {
+                return null;
+            }
+
+            @Override
+            public Collection<Integer> values() {
+                return null;
+            }
+
+            @Override
+            public Set<Entry<Integer, Integer>> entrySet() {
+                return null;
+            }
+        };
+        System.out.println("Super class: " + map.getClass().getGenericSuperclass());
+        System.out.println("Name: " + map.getClass().getName());
+        System.out.println("Type Name: " + Arrays.deepToString(map.getClass().getGenericInterfaces()));
+        System.out.println("------------------------------------");
     }
 }

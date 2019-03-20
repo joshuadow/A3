@@ -13,10 +13,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
+import java.lang.reflect.*;
+import java.util.*;
 
 public class ObjectCreatorReflective {
 
@@ -280,18 +278,73 @@ public class ObjectCreatorReflective {
         field.set(obj, object);
     }
 
-    /**
-     *
-     * @param arrClassName
-     * @param dimArr  contains size of each dimension per index i
-     * @param currentDim contains the current dimension we are looking at
-     * @return
-     */
-    /*private static Object getRecursiveArray(String arrClassName, int[] dimArr, int currentDim) {
-        //int[][][][] -> int[a][][][] -> int[][b][][] -> ... -> int[][][][d] -> here is where we prompt
-        Object toReturn;
-        for(int i = 0; i < dimArr[currentDim]; i++){
+    public static void isACollection(Field field, Object obj) throws NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException, InstantiationException, ClassNotFoundException, NoSuchFieldException {
+        /*Class classObj = field.getType();
+        Object object;
+        if(field.getType().isInterface()) {
+            System.out.println(field.getType());
+            String name = field.getType().getName();
+            String selectedImplementation = ObjectCreatorController.getImplementationChoice(name);
+            classObj = Class.forName("java.util."+selectedImplementation);
+            object = classObj.getConstructor(new Class[] {}).newInstance();
+        }*/
 
+        String ref = field.getType().getName();
+        field.setAccessible(true);
+        if (ref.equals("java.util.Collection")) {
+
+            System.out.println("Collection");
         }
-    }*/
+        else if(ref.equals("java.util.List")){
+            Class c = field.get(obj).getClass();
+            List copy = null;
+            if(c.getName().equals("java.util.ArrayList")){
+                copy = (ArrayList<Object>) field.get(obj);
+            }
+            else if(c.getName().equals("java.util.LinkedList")){
+                copy = (LinkedList<Object>) field.get(obj);
+            }
+            else {
+                copy = (List<Object>) field.get(obj);
+            }
+            Class component = Helper.guessComponents(copy);
+            List<?> toReturn = null;
+            for(int i = 0; i < copy.size(); i++){
+                Object object = component.getConstructor(new Class[] {}).newInstance();
+                for(Field f : object.getClass().getDeclaredFields()){
+                    f.setAccessible(true);
+                    if(!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")){
+                        notPrimitive(f, object, 0);
+                    }
+                    else if(f.getType().isArray()){
+                        isAnArray(f, object);
+                    }
+                    else if(f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
+                        ObjectCreatorController.createPopUp(f, object, obj);
+                    }
+                }
+                copy.set(i, object);
+            }
+            try {
+                field.set(copy, obj);
+            }
+            catch(IllegalArgumentException e){
+
+            }
+        }
+        else if(ref.equals("java.util.Map")){
+            System.out.println("Map");
+        }
+        else if(ref.equals("java.util.Queue")){
+            System.out.println("Queue");
+        }
+        else if(ref.equals("java.util.Deque")){
+            System.out.println("Deque");
+        }
+        else if(ref.equals("java.util.Set")){
+            System.out.println("Set");
+        }
+
+    }
 }
