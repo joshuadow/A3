@@ -10,21 +10,22 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.Blend?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ObjectCreatorController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="ObjectCreatorController">
    <children>
       <MenuBar>
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Import Class" onAction="#importClass" />
+              <MenuItem mnemonicParsing="false" onAction="#importClass" text="Import Class" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="Show Help" onAction="#createHelpDialog" />
+              <MenuItem mnemonicParsing="false" onAction="#createHelpDialog" text="Show Help" />
             </items>
           </Menu>
         </menus>
@@ -43,6 +44,11 @@
                   <Label layoutX="25.0" layoutY="224.0" text="Object Creation Progress" />
                   <Button fx:id="delButton" layoutX="22.0" layoutY="185.0" mnemonicParsing="false" onAction="#deleteObject" text="Delete Selected Object" />
                   <TextField fx:id="fieldText2" layoutX="-2.0" layoutY="48.0" promptText="Object Name" />
+                  <Button fx:id="serializeButton" layoutX="53.0" layoutY="295.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="113.0" text="SERIALIZE" textFill="#15cd12" textOverrun="WORD_ELLIPSIS">
+                     <effect>
+                        <Blend />
+                     </effect>
+                  </Button>
                </children>
             </AnchorPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="370.0" prefWidth="246.0">

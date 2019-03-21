@@ -557,7 +557,7 @@ public class ObjectCreatorReflective {
 
     }
 
-    private static Object[] checkPrimitive(Class cls) {
+    public static Object[] checkPrimitive(Class cls) {
         Object[] objArr = {null, null};
         if(cls.getName().equals("java.lang.Integer")) {
             objArr[0] = true;
@@ -602,7 +602,7 @@ public class ObjectCreatorReflective {
         return objArr;
     }
 
-    private static Object getPrimitive(Class cls){
+    public static Object getPrimitive(Class cls){
         Object toReturn = null;
         if(cls.getName().equals("java.lang.Integer")) {
             int i = Integer.parseInt(ObjectCreatorController.getObjectPrimitive(cls));

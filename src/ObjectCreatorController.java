@@ -26,11 +26,14 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+
+import org.jdom2.*;
 
 public class ObjectCreatorController {
 
@@ -61,11 +64,93 @@ public class ObjectCreatorController {
     @FXML
     private TextField fieldText2;
 
+    @FXML
+    private Button serializeButton;
+
     private Class classObj;
     private Object obj;
     private ArrayList<Object> objArr = new ArrayList<Object>();
     private Object parentObj;
     private ArrayList<File> classesToLoad;
+
+    public void prepForSerialize() throws IllegalAccessException {
+        for(Object o : objArr) {
+            Serializer ser = new Serializer();
+            Document serialized = ser.serialize(o);
+            String ip = ObjectCreatorController.getIPFromUser();
+            int port = Integer.parseInt(ObjectCreatorController.getPortFromUser());
+            Client client = new Client(ip, port);
+            client.connect();
+            client.send(serialized);
+        }
+    }
+
+    public static String getIPFromUser() {
+        VBox vb = new VBox();
+        Text getInfo = new Text("\n\nPlease enter the IP you want to connect to: \n");
+        getInfo.setFont(Font.font(24));
+        getInfo.setFont(Font.font("Comic Sans"));
+        getInfo.setTextAlignment(TextAlignment.CENTER);
+        vb.getChildren().add(getInfo);
+        TextArea textArea = new TextArea();
+        textArea.setPromptText("Enter the IP: ");
+        textArea.setMaxHeight(25);
+        Button submit = new Button();
+        submit.setText("Submit IP");
+        vb.getChildren().add(textArea);
+        vb.getChildren().add(submit);
+
+        Scene scene = new Scene(vb, 600, 150);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("GETTING IP OF SERVER: ");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(textArea.getText().equals(""))
+                    return;
+                else
+                    stage.close();
+            }
+        });
+        stage.showAndWait();
+        return textArea.getText();
+    }
+
+    public static String getPortFromUser(){
+        VBox vb = new VBox();
+        Text getInfo = new Text("\n\nPlease enter the port the server is listening on: \n");
+        getInfo.setFont(Font.font(24));
+        getInfo.setFont(Font.font("Comic Sans"));
+        getInfo.setTextAlignment(TextAlignment.CENTER);
+        vb.getChildren().add(getInfo);
+        TextArea textArea = new TextArea();
+        textArea.setPromptText("Enter the port: ");
+        textArea.setMaxHeight(25);
+        Button submit = new Button();
+        submit.setText("Submit port");
+        vb.getChildren().add(textArea);
+        vb.getChildren().add(submit);
+
+        Scene scene = new Scene(vb, 600, 150);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("GETTING PORT OF SERVER: ");
+        submit.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if(textArea.getText().equals(""))
+                    return;
+                else
+                    stage.close();
+            }
+        });
+        stage.showAndWait();
+        return textArea.getText();
+
+    }
 
     public static Integer getTopLevelElements(int i, Field f){
         VBox vb = new VBox();
@@ -342,6 +427,22 @@ public class ObjectCreatorController {
             }
         });
 
+        serializeButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if(objArr.size() == 0){
+                    throwEmptyObjError();
+                }
+                else {
+                    try {
+                        prepForSerialize();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
 
     }
 
@@ -350,7 +451,8 @@ public class ObjectCreatorController {
         for(File f : classesToLoad){
             String s = f.getName().replaceFirst(".class", "");
             if(s.equals("ObjectCreator") || s.equals("Serializer") || s.equals("Visualizer") || s.equals("Deserializer") ||
-                    s.contains("ObjectCreatorController") || s.contains("ObjectCreatorReflective") || s.contains("Helper")){ continue;}
+                    s.contains("ObjectCreatorController") || s.contains("ObjectCreatorReflective")
+                    || s.contains("Helper") || s.contains("Client") || s.contains("Server")){ continue;}
             classBox.getItems().add(s);
         }
     }
@@ -361,6 +463,7 @@ public class ObjectCreatorController {
                 "I am a help dialog designed to guide you through the steps of working this program\n\n" +
                 "Firstly, select your class from the first ComboBox. Note this program can take custom classes\n" +
                 "\tYou can import classes by clicking File -> Import Class\n\n" +
+                "\tIt is advised your imported classes have a toString() method!" +
                 "You have the option of naming your object in the text area\n" +
                 "Select the field that you want to alter/set\n" +
                 "\tIf the field is a primitive just simply set the value in the text area below\n" +
@@ -370,6 +473,7 @@ public class ObjectCreatorController {
                 "You have the option of inspecting already created object by double clicking on them in the top right most pane\n" +
                 "The area directly below this will display the information you are looking for\n" +
                 "To delete an already created object, simply double click on the object name and press the delete object button\n" +
+                "\nOnce all of your objects have been created, please click SERIALIZE" +
                 "\n\nYou can recreate this dialog anytime by clicking Help -> Show Help");
         getInfo.setFont(Font.font(24));
         getInfo.setFont(Font.font("Comic Sans"));
@@ -684,6 +788,21 @@ public class ObjectCreatorController {
     public static void throwIndexError() {
         BorderPane borderPane = new BorderPane();
         Text warning = new Text("\n\nYou've been clicking out of bounds");
+        warning.setFont(Font.font(24));
+        warning.setFont(Font.font("Comic Sans"));
+        warning.setTextAlignment(TextAlignment.CENTER);
+        borderPane.getChildren().add(warning);
+        Scene scene = new Scene(borderPane, 230, 50);
+        scene.setFill(Color.RED);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.setTitle("ERROR");
+        stage.show();
+    }
+
+    public static void throwEmptyObjError(){
+        BorderPane borderPane = new BorderPane();
+        Text warning = new Text("\n\nYou havent created an object yet!");
         warning.setFont(Font.font(24));
         warning.setFont(Font.font("Comic Sans"));
         warning.setTextAlignment(TextAlignment.CENTER);
