@@ -1,18 +1,3 @@
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
-
-import java.io.File;
-import java.io.FilenameFilter;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -291,13 +276,10 @@ public class ObjectCreatorReflective {
         }*/
 
         String ref = field.getType().getName();
+        Class c = field.get(obj).getClass();
         field.setAccessible(true);
-        if (ref.equals("java.util.Collection")) {
-
-            System.out.println("Collection");
-        }
-        else if(ref.equals("java.util.List")){
-            Class c = field.get(obj).getClass();
+        int size = ObjectCreatorController.getCollectionSize(0, c);
+        if(ref.equals("java.util.List") || ref.equals("java.util.ArrayList") || ref.equals("java.util.LinkedList")){
             List copy = null;
             if(c.getName().equals("java.util.ArrayList")){
                 copy = (ArrayList<Object>) field.get(obj);
@@ -308,43 +290,364 @@ public class ObjectCreatorReflective {
             else {
                 copy = (List<Object>) field.get(obj);
             }
+            Object object = null;
             Class component = Helper.guessComponents(copy);
-            List<?> toReturn = null;
-            for(int i = 0; i < copy.size(); i++){
-                Object object = component.getConstructor(new Class[] {}).newInstance();
-                for(Field f : object.getClass().getDeclaredFields()){
-                    f.setAccessible(true);
-                    if(!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")){
-                        notPrimitive(f, object, 0);
-                    }
-                    else if(f.getType().isArray()){
-                        isAnArray(f, object);
-                    }
-                    else if(f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
-                        ObjectCreatorController.createPopUp(f, object, obj);
+            for(int i = 0; i < size; i++){
+                if(checkPrimitive(component)[0].equals(true)){
+                    object = getPrimitive(component);
+                }
+                else {
+                    object = component.getConstructor(new Class[]{}).newInstance();
+                    for (Field f : object.getClass().getDeclaredFields()) {
+                        f.setAccessible(true);
+                        if (!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")) {
+                            notPrimitive(f, object, 0);
+                        } else if (f.getType().isArray()) {
+                            isAnArray(f, object);
+                        } else if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
+                            ObjectCreatorController.createPopUp(f, object, obj);
+                        }
                     }
                 }
                 copy.set(i, object);
             }
-            try {
-                field.set(copy, obj);
-            }
-            catch(IllegalArgumentException e){
-
-            }
+            field.set(obj, copy);
         }
-        else if(ref.equals("java.util.Map")){
-            System.out.println("Map");
+        else if(ref.equals("java.util.Map") || ref.equals("java.util.HashMap") || ref.equals("java.util.LinkedHashMap") || ref
+        .equals("java.util.TreeMap")) {
+            Map copy;
+            if (c.getName().equals("java.util.HashMap")) {
+                copy = (HashMap<Object, Object>) field.get(obj);
+            } else if (c.getName().equals("java.util.TreeMap")) {
+                copy = (TreeMap<Object, Object>) field.get(obj);
+            } else if (c.getName().equals("java.util.LinkedHashMap")) {
+                copy = (LinkedHashMap<Object, Object>) field.get(obj);
+            } else {
+                copy = (Map<Object, Object>) field.get(obj);
+            }
+            Class keys = Helper.guessKeyComponents(copy);
+            Class values = Helper.guessValueComponents(copy);
+            for(int i = 0; i < size; i++){
+                Object key = null;
+                if(checkPrimitive(keys)[0].equals(true)) {
+                    key = getPrimitive(keys);
+                }
+                else{
+                    key = keys.getConstructor(new Class[]{}).newInstance();
+                    for(Field f : key.getClass().getDeclaredFields()){
+                        f.setAccessible(true);
+                        if(!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")){
+                            notPrimitive(f, key, 0);
+                        }
+                        else if(f.getType().isArray()){
+                            isAnArray(f, key);
+                        }
+                        else if(f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
+                            ObjectCreatorController.createPopUp(f, key, obj);
+                        }
+                    }
+                }
+                Object value = null;
+                if(checkPrimitive(values)[0].equals(true)){
+                    value = getPrimitive(values);
+                }
+                else{
+                    value = values.getConstructor(new Class[] {}).newInstance();
+                    for(Field f : value.getClass().getDeclaredFields()){
+                        f.setAccessible(true);
+                        if(!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")){
+                            notPrimitive(f, value, 0);
+                        }
+                        else if(f.getType().isArray()){
+                            isAnArray(f, value);
+                        }
+                        else if(f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
+                            ObjectCreatorController.createPopUp(f, value, obj);
+                        }
+                    }
+                }
+                copy.put(key,value);
+            }
+            field.set(obj, copy);
         }
         else if(ref.equals("java.util.Queue")){
-            System.out.println("Queue");
+            Queue<Object> copy = new Queue<>() {
+                @Override
+                public boolean add(Object o) {
+                    return false;
+                }
+
+                @Override
+                public boolean offer(Object o) {
+                    return false;
+                }
+
+                @Override
+                public Object remove() {
+                    return null;
+                }
+
+                @Override
+                public Object poll() {
+                    return null;
+                }
+
+                @Override
+                public Object element() {
+                    return null;
+                }
+
+                @Override
+                public Object peek() {
+                    return null;
+                }
+
+                @Override
+                public int size() {
+                    return 0;
+                }
+
+                @Override
+                public boolean isEmpty() {
+                    return false;
+                }
+
+                @Override
+                public boolean contains(Object o) {
+                    return false;
+                }
+
+                @Override
+                public Iterator<Object> iterator() {
+                    return null;
+                }
+
+                @Override
+                public Object[] toArray() {
+                    return new Object[0];
+                }
+
+                @Override
+                public <T> T[] toArray(T[] a) {
+                    return null;
+                }
+
+                @Override
+                public boolean remove(Object o) {
+                    return false;
+                }
+
+                @Override
+                public boolean containsAll(Collection<?> c) {
+                    return false;
+                }
+
+                @Override
+                public boolean addAll(Collection<?> c) {
+                    return false;
+                }
+
+                @Override
+                public boolean removeAll(Collection<?> c) {
+                    return false;
+                }
+
+                @Override
+                public boolean retainAll(Collection<?> c) {
+                    return false;
+                }
+
+                @Override
+                public void clear() {
+
+                }
+            };
+            Class type = Helper.guessQueueComponents(copy);
+            Object key = null;
+            for(int i = 0; i < size; i++) {
+                if(checkPrimitive(type)[0].equals(true)){
+                    key = getPrimitive(type);
+                }
+                else {
+                    key = type.getConstructor(new Class[]{}).newInstance();
+                    for (Field f : key.getClass().getDeclaredFields()) {
+                        f.setAccessible(true);
+                        if (!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")) {
+                            notPrimitive(f, key, 0);
+                        } else if (f.getType().isArray()) {
+                            isAnArray(f, key);
+                        } else if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
+                            ObjectCreatorController.createPopUp(f, key, obj);
+                        }
+                    }
+                }
+                copy.add(key);
+            }
+            field.set(obj, copy);
         }
-        else if(ref.equals("java.util.Deque")){
-            System.out.println("Deque");
+        else if(ref.equals("java.util.Deque") || ref.equals("java.util.ArrayDeque")){
+            Deque copy;
+            if (c.getName().equals("java.util.ArrayDeque")) {
+                copy = (ArrayDeque<Object>) field.get(obj);
+            } else if (c.getName().equals("java.util.LinkedList")) {
+                copy = (LinkedList<Object>) field.get(obj);
+            } else {
+                copy = (Deque) field.get(obj);
+            }
+            Class type = Helper.guessQueueComponents(copy);
+            Object key = null;
+            for(int i = 0; i < size; i++) {
+                if(checkPrimitive(type)[0].equals(true)){
+                    key = getPrimitive(type);
+                }
+                else {
+                    key = type.getConstructor(new Class[]{}).newInstance();
+                    for (Field f : key.getClass().getDeclaredFields()) {
+                        f.setAccessible(true);
+                        if (!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")) {
+                            notPrimitive(f, key, 0);
+                        } else if (f.getType().isArray()) {
+                            isAnArray(f, key);
+                        } else if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
+                            ObjectCreatorController.createPopUp(f, key, obj);
+                        }
+                    }
+                }
+                copy.add(key);
+            }
+            field.set(obj, copy);
         }
-        else if(ref.equals("java.util.Set")){
-            System.out.println("Set");
+        else if(ref.equals("java.util.Set") || ref.equals("java.util.HashSet") || ref.equals("java.util.TreeSet") ||
+        ref.equals("LinkedHashSet")){
+            Set copy;
+            if(c.getName().equals("java.util.HashSet")){
+                copy = (HashSet<Object>) field.get(obj);
+            }
+            else if(c.getName().equals("java.util.TreeSet")){
+                copy = (TreeSet<Object>) field.get(obj);
+            }
+            else if(c.getName().equals("LinkedHashSet")){
+                copy = (LinkedHashSet<Object>) field.get(obj);
+            }
+            else
+                copy = (Set<Object>) field.get(obj);
+            Class type = Helper.guessSetComponents(copy);
+            Object key = null;
+            for(int i = 0; i < size; i++) {
+                if(checkPrimitive(type)[0].equals(true)){
+                    key = getPrimitive(type);
+                }
+                else {
+                    key = type.getConstructor(new Class[]{}).newInstance();
+                    for (Field f : key.getClass().getDeclaredFields()) {
+                        f.setAccessible(true);
+                        if (!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")) {
+                            notPrimitive(f, key, 0);
+                        } else if (f.getType().isArray()) {
+                            isAnArray(f, key);
+                        } else if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
+                            ObjectCreatorController.createPopUp(f, key, obj);
+                        }
+                    }
+                }
+                copy.add(key);
+            }
+            field.set(obj, copy);
         }
+
+    }
+
+    private static Object[] checkPrimitive(Class cls) {
+        Object[] objArr = {null, null};
+        if(cls.getName().equals("java.lang.Integer")) {
+            objArr[0] = true;
+            objArr[1] = cls.getName();
+        }
+        else if(cls.getName().equals("java.lang.Byte")) {
+            objArr[0] = true;
+            objArr[1] = cls.getName();
+        }
+        else if(cls.getName().equals("java.lang.Double")){
+            objArr[0] = true;
+            objArr[1] = cls.getName();
+        }
+        else if(cls.getName().equals("java.lang.Character")){
+            objArr[0] = true;
+            objArr[1] = cls.getName();
+        }
+        else if(cls.getName().equals("java.lang.Long")){
+            objArr[0] = true;
+            objArr[1] = cls.getName();
+        }
+        else if(cls.getName().equals("java.lang.Float")){
+            objArr[0] = true;
+            objArr[1] = cls.getName();
+        }
+        else if(cls.getName().equals("java.lang.Short")){
+            objArr[0] = true;
+            objArr[1] = cls.getName();
+        }
+        else if(cls.getName().equals("java.lang.Boolean")){
+            objArr[0] = true;
+            objArr[1] = cls.getName();
+        }
+        else if(cls.getName().equals("java.lang.String")){
+            objArr[0] = true;
+            objArr[1] = cls.getName();
+        }
+        else{
+            objArr[0] = false;
+            objArr[1] = cls.getName();
+        }
+        return objArr;
+    }
+
+    private static Object getPrimitive(Class cls){
+        Object toReturn = null;
+        if(cls.getName().equals("java.lang.Integer")) {
+            int i = Integer.parseInt(ObjectCreatorController.getObjectPrimitive(cls));
+            toReturn = i;
+        }
+        else if(cls.getName().equals("java.lang.Byte")) {
+            byte b = Byte.parseByte(ObjectCreatorController.getObjectPrimitive(cls));
+            toReturn = b;
+        }
+        else if(cls.getName().equals("java.lang.Double")){
+            double d = Double.parseDouble(ObjectCreatorController.getObjectPrimitive(cls));
+            toReturn = d;
+        }
+        else if(cls.getName().equals("java.lang.Character")){
+            char c = ObjectCreatorController.getObjectPrimitive(cls).charAt(0);
+            toReturn = c;
+        }
+        else if(cls.getName().equals("java.lang.Long")){
+            long l = Long.parseLong(ObjectCreatorController.getObjectPrimitive(cls));
+            toReturn = l;
+        }
+        else if(cls.getName().equals("java.lang.Float")){
+            float f = Float.parseFloat(ObjectCreatorController.getObjectPrimitive(cls));
+            toReturn = f;
+        }
+        else if(cls.getName().equals("java.lang.Short")){
+            short s = Short.parseShort(ObjectCreatorController.getObjectPrimitive(cls));
+            toReturn = s;
+        }
+        else if(cls.getName().equals("java.lang.Boolean")){
+            String s = ObjectCreatorController.getObjectPrimitive(cls);
+            if (s.equals("1")) {
+                s = "true";
+            }
+            if (s.equals("0")) {
+                s = "false";
+            }
+            boolean b = Boolean.parseBoolean(s);
+            toReturn = b;
+        }
+        else if(cls.getName().equals("java.lang.String")){
+            String s = ObjectCreatorController.getObjectPrimitive(cls);
+            toReturn = s;
+        }
+        return toReturn;
 
     }
 }

@@ -429,4 +429,11 @@ class ObjectCreatorReflectiveTest {
         System.out.println("Type Name: " + Arrays.deepToString(map.getClass().getGenericInterfaces()));
         System.out.println("------------------------------------");
     }
+
+    @Test
+    public void testInstantiation() throws NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException, InstantiationException {
+        System.out.println(Integer.class.getSuperclass());
+
+    }
 }

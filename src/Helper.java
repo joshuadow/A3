@@ -119,4 +119,80 @@ public class Helper {
         s.add(c);
         return s;
     }
+
+    public static Class guessKeyComponents(Map copy) {
+        Class<?> guess = null;
+        for (Object o : copy.keySet())
+        {
+            if (o != null)
+            {
+                if (guess == null)
+                {
+                    guess = o.getClass();
+                }
+                else if (guess != o.getClass())
+                {
+                    guess = lowestCommonSuper(guess, o.getClass());
+                }
+            }
+        }
+        return guess;
+    }
+
+    public static Class guessValueComponents(Map copy) {
+        Class<?> guess = null;
+        for (Object o : copy.values())
+        {
+            if (o != null)
+            {
+                if (guess == null)
+                {
+                    guess = o.getClass();
+                }
+                else if (guess != o.getClass())
+                {
+                    guess = lowestCommonSuper(guess, o.getClass());
+                }
+            }
+        }
+        return guess;
+    }
+
+    public static Class guessQueueComponents(Queue copy) {
+        Class<?> guess = null;
+        for (Object o : copy)
+        {
+            if (o != null)
+            {
+                if (guess == null)
+                {
+                    guess = o.getClass();
+                }
+                else if (guess != o.getClass())
+                {
+                    guess = lowestCommonSuper(guess, o.getClass());
+                }
+            }
+        }
+        return guess;
+    }
+
+    public static Class guessSetComponents(Set copy) {
+        Class<?> guess = null;
+        for (Object o : copy)
+        {
+            if (o != null)
+            {
+                if (guess == null)
+                {
+                    guess = o.getClass();
+                }
+                else if (guess != o.getClass())
+                {
+                    guess = lowestCommonSuper(guess, o.getClass());
+                }
+            }
+        }
+        return guess;
+    }
 }
