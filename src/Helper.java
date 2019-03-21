@@ -1,9 +1,10 @@
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.io.*;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.*;
 
@@ -196,4 +197,22 @@ public class Helper {
         return guess;
     }
 
+    public static String getMyIP() throws MalformedURLException {
+        String systemipaddress = "";
+        URL url_name = new URL("http://bot.whatismyipaddress.com");
+
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(url_name.openStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            systemipaddress = br.readLine().trim();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return systemipaddress;
+    }
 }

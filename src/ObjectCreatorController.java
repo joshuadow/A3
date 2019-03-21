@@ -80,8 +80,7 @@ public class ObjectCreatorController {
             String ip = ObjectCreatorController.getIPFromUser();
             int port = Integer.parseInt(ObjectCreatorController.getPortFromUser());
             Client client = new Client(ip, port);
-            client.connect();
-            client.send(serialized);
+            client.connect(serialized);
         }
     }
 
