@@ -2,6 +2,7 @@ public class ReferenceToOthers {
     private PrimitivesOnly p;
 
     public ReferenceToOthers(){
+        p = new PrimitivesOnly();
     }
 
     @Override

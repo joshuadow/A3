@@ -73,15 +73,18 @@ public class ObjectCreatorController {
     private Object parentObj;
     private ArrayList<File> classesToLoad;
 
-    public void prepForSerialize() throws IllegalAccessException {
+    public void prepForSerialize() throws IllegalAccessException, IOException {
+        ArrayList<Document> docList = new ArrayList<>();
         for(Object o : objArr) {
             Serializer ser = new Serializer();
             Document serialized = ser.serialize(o);
+            docList.add(serialized);
+        }
             String ip = ObjectCreatorController.getIPFromUser();
             int port = Integer.parseInt(ObjectCreatorController.getPortFromUser());
             Client client = new Client(ip, port);
-            client.connect(serialized);
-        }
+            client.connect(docList);
+            client.stop();
     }
 
     public static String getIPFromUser() {
@@ -435,7 +438,7 @@ public class ObjectCreatorController {
                 else {
                     try {
                         prepForSerialize();
-                    } catch (IllegalAccessException e) {
+                    } catch (IllegalAccessException | IOException e) {
                         e.printStackTrace();
                     }
                 }

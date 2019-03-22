@@ -10,12 +10,16 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import org.jdom2.Document;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
@@ -26,7 +30,7 @@ public class VisualizerController {
 
     @FXML
     private TextArea textArea;
-    public void initialize() throws MalformedURLException {
+    public void initialize() throws IOException {
         String externalIP = Helper.getMyIP();
         if(externalIP.equals("")){
             System.out.println("Could not get IP");
@@ -77,16 +81,21 @@ public class VisualizerController {
         try {
             int myPort = getMyPort();
             Server server = new Server();
-            Object o = server.start(myPort);
-            Scanner keyboard = new Scanner(System.in);
-            while (!keyboard.next().equals("quit"));
-
-            System.out.println();
-            System.out.println("shutting down the server...");
+            ArrayList<Document> newDoc = server.start(myPort);
             server.shutdown();
-            System.out.println("server stopped");
+            Deserializer.recreateObject(newDoc);
         } catch (IOException e) {
             System.out.println("Could not start server");
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
         }
     }
 }

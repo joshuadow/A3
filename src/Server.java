@@ -1,46 +1,42 @@
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.XMLOutputter;
 
+import javax.print.Doc;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Server {
     private ServerSocket serverSocket;
-    private Socket clientSocket;
+    private Socket socket;
     private PrintWriter out;
-    private Scanner in;
+    private BufferedReader in;
     public Server(){}
 
-    public Object start(int port) throws IOException {
+    public ArrayList<Document> start(int port) throws IOException {
+        ArrayList<Document> docList = null;
         try{
             serverSocket = new ServerSocket(port);
-            Socket socket = serverSocket.accept();
+            socket = serverSocket.accept();
             // Connected to client
-             out = new PrintWriter(new DataOutputStream(
-                    socket.getOutputStream()));
-             in = new Scanner(new InputStreamReader(
-                    socket.getInputStream()));
-            // Respond to messages from the client
-            while (true) {
-                String s = in.nextLine();
-
-                out.println(s);
-                out.flush();
-            }
+            out = new PrintWriter(socket.getOutputStream(),true);
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+            docList = (ArrayList<Document>) objectInputStream.readObject();
+            serverSocket.close();
         }
         catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
-
-        return new Object();
+        return docList;
     }
 
     public void shutdown() throws IOException {
         in.close();
         out.close();
-        clientSocket.close();
-        serverSocket.close();
+        socket.close();
     }
 }

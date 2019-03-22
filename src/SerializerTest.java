@@ -4,6 +4,8 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SerializerTest {
@@ -30,5 +32,16 @@ class SerializerTest {
             Element primValue = new Element("value");
 
         }
+    }
+
+    @Test
+    public void testCollections() throws IllegalAccessException {
+        Serializer s = new Serializer();
+        Document test = null;
+        XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
+        ReferenceToOthers r = new ReferenceToOthers();
+        test = s.serialize(r);
+        System.out.println(xmlOutputter.outputString(test));
+
     }
 }

@@ -197,22 +197,19 @@ public class Helper {
         return guess;
     }
 
-    public static String getMyIP() throws MalformedURLException {
+    public static String getMyIP() throws IOException {
         String systemipaddress = "";
-        URL url_name = new URL("http://bot.whatismyipaddress.com");
+        URL url_name = new URL("https://myexternalip.com/raw");
 
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new InputStreamReader(url_name.openStream()));
-        } catch (IOException e) {
-            e.printStackTrace();
+            InputStreamReader inputStreamReader = new InputStreamReader(url_name.openStream());
+            br = new BufferedReader(inputStreamReader);
+            systemipaddress = br.readLine().trim();
+        } catch (IOException | NullPointerException e) {
+            systemipaddress = "localhost";
         }
 
-        try {
-            systemipaddress = br.readLine().trim();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         return systemipaddress;
     }
 }
