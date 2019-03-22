@@ -265,15 +265,6 @@ public class ObjectCreatorReflective {
 
     public static void isACollection(Field field, Object obj) throws NoSuchMethodException,
             IllegalAccessException, InvocationTargetException, InstantiationException, ClassNotFoundException, NoSuchFieldException {
-        /*Class classObj = field.getType();
-        Object object;
-        if(field.getType().isInterface()) {
-            System.out.println(field.getType());
-            String name = field.getType().getName();
-            String selectedImplementation = ObjectCreatorController.getImplementationChoice(name);
-            classObj = Class.forName("java.util."+selectedImplementation);
-            object = classObj.getConstructor(new Class[] {}).newInstance();
-        }*/
 
         String ref = field.getType().getName();
         Class c = field.get(obj).getClass();

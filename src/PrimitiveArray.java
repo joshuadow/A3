@@ -14,7 +14,7 @@ public class PrimitiveArray {
     public String toString() {
         return "\nPrimitiveArray :" +
                 "\n\tintArr=" + Arrays.toString(intArr) +
-                "\n\tint2DArr=" + Arrays.deepToString(int2DArr) + '\'' +
+                "\n\tint2DArr=" + Arrays.deepToString(int2DArr) +
                 "\n\tprimOnlyArr=" + Arrays.deepToString(primOnlyArr) +
                 "\n\tpo=" + po.toString() +
                 "\n\tpo2=" + po2.toString() +

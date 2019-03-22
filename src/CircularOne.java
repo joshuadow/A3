@@ -2,9 +2,12 @@ public class CircularOne {
     private PrimitivesOnly po;
     private ReferenceToOthers rto;
     private CircularTwo c2;
-    private PrimitiveArray[] paa;
 
-    public CircularOne(){}
+    public CircularOne(){
+        po = new PrimitivesOnly();
+        rto = new ReferenceToOthers();
+        c2 = new CircularTwo();
+    }
     @Override
     public String toString() {
         return "\nCircularOne: " +

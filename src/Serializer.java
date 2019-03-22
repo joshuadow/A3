@@ -141,7 +141,19 @@ public class Serializer {
                     primElements(mapValue, key.getClass().getName(), key);
                 }
                 else{
-                    recurseElements(key, dArr, mapValue, root, false);
+                    //recurseElements(key, dArr, mapValue, root, false);
+                    Element refer = new Element("reference");
+                    if(!identityHashMap.containsKey(key)) {
+                        identityHashMap.put(key, this.counter);
+                        refer.addContent(String.valueOf(this.counter));
+                        this.counter++;
+                        doElement.addContent(refer);
+                        addObject(key, root);
+                    }
+                    else{
+                        refer.addContent(String.valueOf(identityHashMap.get(key)));
+                        doElement.addContent(refer);
+                    }
                 }
                 mapValue.addContent(",");
                 dArr = ObjectCreatorReflective.checkPrimitive(copy.get(key).getClass());
@@ -149,7 +161,19 @@ public class Serializer {
                     primElements(mapValue, copy.get(key).getClass().getName(), copy.get(key));
                 }
                 else{
-                    recurseElements(copy.get(key), dArr, mapValue, root, false);
+                    //recurseElements(copy.get(key), dArr, mapValue, root, false);
+                    Element refer = new Element("reference");
+                    if(!identityHashMap.containsKey(copy.get(key))) {
+                        identityHashMap.put(copy.get(key), this.counter);
+                        refer.addContent(String.valueOf(this.counter));
+                        this.counter++;
+                        mapValue.addContent(refer);
+                        addObject(copy.get(key), root);
+                    }
+                    else{
+                        refer.addContent(String.valueOf(identityHashMap.get(copy.get(key))));
+                        mapValue.addContent(refer);
+                    }
                 }
                 doElement.addContent(mapValue);
             }
@@ -170,9 +194,22 @@ public class Serializer {
                 Element listValue = new Element("value");
                 if(dArr[0].equals(true)){
                     primElements(listValue, copy.get(i).getClass().getName(), copy.get(i));
+                    doElement.addContent(listValue);
                 }
                 else{
-                    recurseElements(copy.get(i), dArr, listValue, root, false);
+                    //recurseElements(copy.get(i), dArr, listValue, root, false);
+                    Element refer = new Element("reference");
+                    if(!identityHashMap.containsKey(copy.get(i))) {
+                        identityHashMap.put(copy.get(i), this.counter);
+                        refer.addContent(String.valueOf(this.counter));
+                        this.counter++;
+                        doElement.addContent(refer);
+                        addObject(copy.get(i), root);
+                    }
+                    else{
+                        refer.addContent(String.valueOf(identityHashMap.get(copy.get(i))));
+                        doElement.addContent(refer);
+                    }
                 }
             }
         }
@@ -183,9 +220,22 @@ public class Serializer {
                 Element listValue = new Element("value");
                 if(dArr[0].equals(true)){
                     primElements(listValue, gh.getClass().getName(), gh);
+                    doElement.addContent(listValue);
                 }
                 else{
-                    recurseElements(gh, dArr, listValue, root, false);
+                    //recurseElements(gh, dArr, listValue, root, false);
+                    Element refer = new Element("reference");
+                    if(!identityHashMap.containsKey(gh)) {
+                        identityHashMap.put(gh, this.counter);
+                        refer.addContent(String.valueOf(this.counter));
+                        this.counter++;
+                        doElement.addContent(refer);
+                        addObject(gh, root);
+                    }
+                    else{
+                        refer.addContent(String.valueOf(identityHashMap.get(gh)));
+                        doElement.addContent(refer);
+                    }
                 }
             }
 
@@ -203,9 +253,22 @@ public class Serializer {
                 Element listValue = new Element("value");
                 if(dArr[0].equals(true)){
                     primElements(listValue, dh.getClass().getName(), dh);
+                    doElement.addContent(listValue);
                 }
                 else{
-                    recurseElements(dh, dArr, listValue, root, false);
+                    //recurseElements(dh, dArr, listValue, root, false);
+                    Element refer = new Element("reference");
+                    if(!identityHashMap.containsKey(dh)) {
+                        identityHashMap.put(dh, this.counter);
+                        refer.addContent(String.valueOf(this.counter));
+                        this.counter++;
+                        doElement.addContent(refer);
+                        addObject(dh, root);
+                    }
+                    else{
+                        refer.addContent(String.valueOf(identityHashMap.get(dh)));
+                        doElement.addContent(refer);
+                    }
                 }
             }
         }
@@ -229,9 +292,22 @@ public class Serializer {
                 Element listValue = new Element("value");
                 if(dArr[0].equals(true)){
                     primElements(listValue, jh.getClass().getName(), jh);
+                    doElement.addContent(listValue);
                 }
                 else{
-                    recurseElements(jh, dArr, listValue, root, false);
+                    //recurseElements(jh, dArr, listValue, root, false);
+                    Element refer = new Element("reference");
+                    if(!identityHashMap.containsKey(jh)) {
+                        identityHashMap.put(jh, this.counter);
+                        refer.addContent(String.valueOf(this.counter));
+                        this.counter++;
+                        doElement.addContent(refer);
+                        addObject(jh, root);
+                    }
+                    else{
+                        refer.addContent(String.valueOf(identityHashMap.get(jh)));
+                        doElement.addContent(refer);
+                    }
                 }
             }
         }

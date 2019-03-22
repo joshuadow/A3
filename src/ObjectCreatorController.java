@@ -452,9 +452,10 @@ public class ObjectCreatorController {
         classBox.getItems().clear();
         for(File f : classesToLoad){
             String s = f.getName().replaceFirst(".class", "");
-            if(s.equals("ObjectCreator") || s.equals("Serializer") || s.equals("Visualizer") || s.equals("Deserializer") ||
+            if(s.equals("ObjectCreator") || s.contains("Serializer") || s.contains("Visualizer") || s.contains("Deserializer") ||
                     s.contains("ObjectCreatorController") || s.contains("ObjectCreatorReflective")
-                    || s.contains("Helper") || s.contains("Client") || s.contains("Server")){ continue;}
+                    || s.contains("Helper") || s.contains("Client") || s.contains("Server") || s.contains("Serializer")
+            || s.contains("Deserializer")){ continue;}
             classBox.getItems().add(s);
         }
     }

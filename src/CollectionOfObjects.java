@@ -1,17 +1,23 @@
 import java.util.*;
 
 public class CollectionOfObjects {
-    private List<PrimitivesOnly> list = new ArrayList<>();
+    private ArrayList<PrimitivesOnly> list = new ArrayList<>();
+    private ArrayList<Integer> intList = new ArrayList<>();
     private HashMap<Integer, PrimitivesOnly> hashMap = new HashMap();
     public CollectionOfObjects(){
-        list.add(new PrimitivesOnly());
-        hashMap.put(6, new PrimitivesOnly());
+        PrimitivesOnly po = new PrimitivesOnly();
+        intList.add(1);
+        intList.add(7);
+        list.add(po);
+        hashMap.put(6, po);
+        hashMap.put(8, po);
     }
 
     @Override
     public String toString() {
         return "CollectionOfObjects{" +
                 "\n\tlist=" + list +
+                "\n\tintList=" + intList +
                 "\n\thashMap=" + hashMap +
                 '}';
     }
