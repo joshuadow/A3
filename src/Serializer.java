@@ -105,17 +105,7 @@ public class Serializer {
                 }
                 else{
                     Element refer = new Element("reference");
-                    if(!identityHashMap.containsKey(a)) {
-                        identityHashMap.put(a, this.counter);
-                        refer.addContent(String.valueOf(this.counter));
-                        this.counter++;
-                        doElement.addContent(refer);
-                        addObject(a, root);
-                    }
-                    else{
-                        refer.addContent(String.valueOf(identityHashMap.get(a)));
-                        doElement.addContent(refer);
-                    }
+                    createNewReference(doElement, root, a, refer);
 
                 }
 
@@ -143,17 +133,7 @@ public class Serializer {
                 else{
                     //recurseElements(key, dArr, mapValue, root, false);
                     Element refer = new Element("reference");
-                    if(!identityHashMap.containsKey(key)) {
-                        identityHashMap.put(key, this.counter);
-                        refer.addContent(String.valueOf(this.counter));
-                        this.counter++;
-                        doElement.addContent(refer);
-                        addObject(key, root);
-                    }
-                    else{
-                        refer.addContent(String.valueOf(identityHashMap.get(key)));
-                        doElement.addContent(refer);
-                    }
+                    createNewReference(doElement, root, key, refer);
                 }
                 mapValue.addContent(",");
                 dArr = ObjectCreatorReflective.checkPrimitive(copy.get(key).getClass());
@@ -225,17 +205,7 @@ public class Serializer {
                 else{
                     //recurseElements(gh, dArr, listValue, root, false);
                     Element refer = new Element("reference");
-                    if(!identityHashMap.containsKey(gh)) {
-                        identityHashMap.put(gh, this.counter);
-                        refer.addContent(String.valueOf(this.counter));
-                        this.counter++;
-                        doElement.addContent(refer);
-                        addObject(gh, root);
-                    }
-                    else{
-                        refer.addContent(String.valueOf(identityHashMap.get(gh)));
-                        doElement.addContent(refer);
-                    }
+                    createNewReference(doElement, root, gh, refer);
                 }
             }
 
@@ -258,17 +228,7 @@ public class Serializer {
                 else{
                     //recurseElements(dh, dArr, listValue, root, false);
                     Element refer = new Element("reference");
-                    if(!identityHashMap.containsKey(dh)) {
-                        identityHashMap.put(dh, this.counter);
-                        refer.addContent(String.valueOf(this.counter));
-                        this.counter++;
-                        doElement.addContent(refer);
-                        addObject(dh, root);
-                    }
-                    else{
-                        refer.addContent(String.valueOf(identityHashMap.get(dh)));
-                        doElement.addContent(refer);
-                    }
+                    createNewReference(doElement, root, dh, refer);
                 }
             }
         }
@@ -297,17 +257,7 @@ public class Serializer {
                 else{
                     //recurseElements(jh, dArr, listValue, root, false);
                     Element refer = new Element("reference");
-                    if(!identityHashMap.containsKey(jh)) {
-                        identityHashMap.put(jh, this.counter);
-                        refer.addContent(String.valueOf(this.counter));
-                        this.counter++;
-                        doElement.addContent(refer);
-                        addObject(jh, root);
-                    }
-                    else{
-                        refer.addContent(String.valueOf(identityHashMap.get(jh)));
-                        doElement.addContent(refer);
-                    }
+                    createNewReference(doElement, root, jh, refer);
                 }
             }
         }
@@ -347,6 +297,20 @@ public class Serializer {
                 }
 
             }
+        }
+    }
+
+    private void createNewReference(Element doElement, Element root, Object a, Element refer) throws IllegalAccessException {
+        if(!identityHashMap.containsKey(a)) {
+            identityHashMap.put(a, this.counter);
+            refer.addContent(String.valueOf(this.counter));
+            this.counter++;
+            doElement.addContent(refer);
+            addObject(a, root);
+        }
+        else{
+            refer.addContent(String.valueOf(identityHashMap.get(a)));
+            doElement.addContent(refer);
         }
     }
 

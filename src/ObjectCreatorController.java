@@ -240,6 +240,13 @@ public class ObjectCreatorController {
         stage.setScene(scene);
         stage.setTitle("ADDING VALUES FOR: " + obj.getClass().getName());
 
+        submitButtonAction(f, obj, textArea, submit, stage);
+        stage.showAndWait();
+
+
+    }
+
+    private static void submitButtonAction(Field f, Object obj, TextArea textArea, Button submit, Stage stage) {
         submit.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -257,9 +264,6 @@ public class ObjectCreatorController {
                 }
             }
         });
-        stage.showAndWait();
-
-
     }
 
     public static int getCollectionSize(int i, Class classObj) {
@@ -446,6 +450,7 @@ public class ObjectCreatorController {
         });
 
 
+
     }
 
     private void updateClassBox(ArrayList<File> classesToLoad) {
@@ -552,22 +557,7 @@ public class ObjectCreatorController {
         stage.setTitle("ADDING VALUES FOR: " + obj.getClass().getName() + " " + field.getClass().getName());
 
 
-        submit.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    if (textArea.getText().equals("")) {
-                        return;
-                    }
-                    if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
-                        ObjectCreatorReflective.parseFields(f, field, textArea.getText());
-                    }
-                    stage.close();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        submitButtonAction(f, field, textArea, submit, stage);
         stage.showAndWait();
     }
 
@@ -581,55 +571,59 @@ public class ObjectCreatorController {
             Field field = fieldarr[i];
             field.setAccessible(true);
             try {
-                if(!field.getType().isArray())
-                    displayInfo.appendText(field.getType() + " " + field.getName() + " : " + field.get(obj) + "\n");
-                else {
-                    String name = field.getType().getName();
-                    if(name.equals("[I"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((int[])field.get(obj))+ "\n");
-                    else if(name.equals("[D"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((double[])field.get(obj))+ "\n");
-                    else if(name.equals("[S"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((short[])field.get(obj))+ "\n");
-                    else if(name.equals("[J"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((long[])field.get(obj))+ "\n");
-                    else if(name.equals("[B"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((byte[])field.get(obj))+ "\n");
-                    else if(name.equals("[C"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((char[])field.get(obj))+ "\n");
-                    else if(name.equals("[F"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((float[])field.get(obj))+ "\n");
-                    else if(name.equals("[Z"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((boolean[])field.get(obj))+ "\n");
-                    else if(name.equals("[[I"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((int[][])field.get(obj))+ "\n");
-                    else if(name.equals("[[D"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((double[][])field.get(obj))+ "\n");
-                    else if(name.equals("[[S"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((short[][])field.get(obj))+ "\n");
-                    else if(name.equals("[[J"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((long[][])field.get(obj))+ "\n");
-                    else if(name.equals("[[B"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((byte[][])field.get(obj))+ "\n");
-                    else if(name.equals("[[C"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((char[][])field.get(obj))+ "\n");
-                    else if(name.equals("[[F"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((float[][])field.get(obj))+ "\n");
-                    else if(name.equals("[[Z"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((boolean[][])field.get(obj))+ "\n");
-                    else if(name.equals("[Ljava.lang.String;"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((String[])field.get(obj))+ "\n");
-                    else if(name.equals("[[Ljava.lang.String;"))
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((String[][])field.get(obj))+ "\n");
-                    else
-                        displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((Object[])field.get(obj)) + "\n");
-
-                }
+                updateDisplayDeep(obj, field, displayInfo);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
         displayInfo.setEditable(false);
+    }
+
+    static void updateDisplayDeep(Object obj, Field field, TextArea displayInfo) throws IllegalAccessException {
+        if(!field.getType().isArray())
+            displayInfo.appendText(field.getType() + " " + field.getName() + " : " + field.get(obj) + "\n");
+        else {
+            String name = field.getType().getName();
+            if(name.equals("[I"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((int[])field.get(obj))+ "\n");
+            else if(name.equals("[D"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((double[])field.get(obj))+ "\n");
+            else if(name.equals("[S"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((short[])field.get(obj))+ "\n");
+            else if(name.equals("[J"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((long[])field.get(obj))+ "\n");
+            else if(name.equals("[B"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((byte[])field.get(obj))+ "\n");
+            else if(name.equals("[C"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((char[])field.get(obj))+ "\n");
+            else if(name.equals("[F"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((float[])field.get(obj))+ "\n");
+            else if(name.equals("[Z"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((boolean[])field.get(obj))+ "\n");
+            else if(name.equals("[[I"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((int[][])field.get(obj))+ "\n");
+            else if(name.equals("[[D"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((double[][])field.get(obj))+ "\n");
+            else if(name.equals("[[S"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((short[][])field.get(obj))+ "\n");
+            else if(name.equals("[[J"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((long[][])field.get(obj))+ "\n");
+            else if(name.equals("[[B"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((byte[][])field.get(obj))+ "\n");
+            else if(name.equals("[[C"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((char[][])field.get(obj))+ "\n");
+            else if(name.equals("[[F"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((float[][])field.get(obj))+ "\n");
+            else if(name.equals("[[Z"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((boolean[][])field.get(obj))+ "\n");
+            else if(name.equals("[Ljava.lang.String;"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((String[])field.get(obj))+ "\n");
+            else if(name.equals("[[Ljava.lang.String;"))
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((String[][])field.get(obj))+ "\n");
+            else
+                displayInfo.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((Object[])field.get(obj)) + "\n");
+
+        }
     }
 
     public void saveField(ActionEvent actionEvent) throws NoSuchFieldException, IllegalAccessException, ClassNotFoundException {
@@ -706,50 +700,7 @@ public class ObjectCreatorController {
                 objDisplayData.setText("Object: " + ohj.getClass().getName() + "\n");
                 for (Field field : ohj.getClass().getDeclaredFields()) {
                     field.setAccessible(true);
-                    if(!field.getType().isArray())
-                        objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + field.get(ohj) + "\n");
-                    else {
-                        String name = field.getType().getName();
-                        if(name.equals("[I"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((int[])field.get(ohj))+ "\n");
-                        else if(name.equals("[D"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((double[])field.get(ohj))+ "\n");
-                        else if(name.equals("[S"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((short[])field.get(ohj))+ "\n");
-                        else if(name.equals("[J"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((long[])field.get(ohj))+ "\n");
-                        else if(name.equals("[B"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((byte[])field.get(ohj))+ "\n");
-                        else if(name.equals("[C"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((char[])field.get(ohj))+ "\n");
-                        else if(name.equals("[F"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((float[])field.get(ohj))+ "\n");
-                        else if(name.equals("[Z"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((boolean[])field.get(ohj))+ "\n");
-                        else if(name.equals("[[I"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((int[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[D"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((double[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[S"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((short[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[J"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((long[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[B"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((byte[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[C"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((char[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[F"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((float[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[Z"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((boolean[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[Ljava.lang.String;"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((String[])field.get(ohj))+ "\n");
-                        else if(name.equals("[[Ljava.lang.String;"))
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((String[][])field.get(ohj))+ "\n");
-                        else
-                            objDisplayData.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((Object[])field.get(ohj)) + "\n");
-
-                    }
+                    updateDisplayDeep(ohj, field, objDisplayData);
                 }
             } catch (IndexOutOfBoundsException e) {
                 throwIndexError();

@@ -114,50 +114,7 @@ public class VisualizerController {
                 objDisplayArea.appendText("Object: " + ohj.getClass().getName() + "\n");
                 for (Field field : ohj.getClass().getDeclaredFields()) {
                     field.setAccessible(true);
-                    if(!field.getType().isArray())
-                        objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + field.get(ohj) + "\n");
-                    else {
-                        String name = field.getType().getName();
-                        if(name.equals("[I"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((int[])field.get(ohj))+ "\n");
-                        else if(name.equals("[D"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((double[])field.get(ohj))+ "\n");
-                        else if(name.equals("[S"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((short[])field.get(ohj))+ "\n");
-                        else if(name.equals("[J"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((long[])field.get(ohj))+ "\n");
-                        else if(name.equals("[B"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((byte[])field.get(ohj))+ "\n");
-                        else if(name.equals("[C"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((char[])field.get(ohj))+ "\n");
-                        else if(name.equals("[F"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((float[])field.get(ohj))+ "\n");
-                        else if(name.equals("[Z"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((boolean[])field.get(ohj))+ "\n");
-                        else if(name.equals("[[I"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((int[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[D"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((double[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[S"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((short[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[J"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((long[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[B"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((byte[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[C"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((char[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[F"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((float[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[[Z"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((boolean[][])field.get(ohj))+ "\n");
-                        else if(name.equals("[Ljava.lang.String;"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.toString((String[])field.get(ohj))+ "\n");
-                        else if(name.equals("[[Ljava.lang.String;"))
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((String[][])field.get(ohj))+ "\n");
-                        else
-                            objDisplayArea.appendText(field.getType() + " " + field.getName() + " : " + Arrays.deepToString((Object[])field.get(ohj)) + "\n");
-
-                    }
+                    ObjectCreatorController.updateDisplayDeep(ohj, field, objDisplayArea);
                 }
             } catch (IndexOutOfBoundsException e) {
                 ObjectCreatorController.throwIndexError();
