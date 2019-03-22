@@ -64,7 +64,6 @@ public class Deserializer {
                         String fieldName = fElt.getAttributeValue("name");
                         Field f = fieldDC.getDeclaredField(fieldName);
                         f.setAccessible(true);
-
                         Element vElt = (Element) fElt.getChildren().get(0);
                         f.set(instance, deserializeValue(vElt, f.getType(), myMap));
                     }
@@ -75,7 +74,12 @@ public class Deserializer {
                     Element idxOrValue = children.get(j);
                     int count;
                     if(comptype.getName().charAt(0) != '[') {
-                        Array.set(instance, j, deserializeValue(idxOrValue, comptype, myMap));
+                        if(comptype.getName().charAt(comptype.getName().length() -1) == ';'){
+
+                        }
+                        else {
+                            Array.set(instance, j, deserializeValue(idxOrValue, comptype, myMap));
+                        }
                     }
                     else{
                         Object object = null;

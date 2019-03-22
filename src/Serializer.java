@@ -9,16 +9,16 @@ import java.util.*;
 
 public class Serializer {
     private IdentityHashMap<Object, Integer> identityHashMap = new IdentityHashMap<Object, Integer>();
-    private int counter = 0;
+    public int counter = 0;
     public Document serialize(Object o) throws IllegalAccessException {
-
+        this.counter = 0;
         Document document = new Document();
         XMLOutputter xOut = new XMLOutputter(Format.getPrettyFormat());
         Element root = new Element("serialized");
         document.addContent(root);
         String className = o.getClass().getName();
-        identityHashMap.put(o, counter);
-        counter++;
+        identityHashMap.put(o, this.counter);
+        this.counter++;
         Element obj = new Element("object");
         obj.setAttribute("class", className);
         obj.setAttribute("id", identityHashMap.get(o).toString());
@@ -27,7 +27,7 @@ public class Serializer {
         }
         root.addContent(obj);
         Object[] oArr = ObjectCreatorReflective.checkPrimitive(o.getClass());
-        recurseElements(o, oArr, obj, root);
+        recurseElements(o, oArr, obj, root, false);
 
         return document;
     }
@@ -42,7 +42,7 @@ public class Serializer {
         root.addContent(obj);
         Object fgeto = f.get(o);
         Object[] oArr = ObjectCreatorReflective.checkPrimitive(fgeto.getClass());
-        recurseElements(fgeto, oArr, obj, root);
+        recurseElements(fgeto, oArr, obj, root, false);
     }
 
     private boolean checkArray(Field f) {
@@ -70,32 +70,53 @@ public class Serializer {
         return dimensions;
     }
 
-    public void recurseElements(Object o, Object[] oArr, Element obj, Element root) throws IllegalAccessException {
+    public void recurseElements(Object o, Object[] oArr, Element doElement, Element root, boolean flag) throws IllegalAccessException {
         if(o == null){
             Element nullEle = new Element("value");
             nullEle.addContent("null");
-            obj.addContent(nullEle);
+            doElement.addContent(nullEle);
         }
         String oName = o.getClass().getName();
         if(o.getClass().isPrimitive() || oArr[0].equals(true)){
             String primName = oArr[1].toString();
             Element primValue = new Element("value");
             primElements(primValue, primName, o);
-            obj.addContent(primValue);
+            doElement.addContent(primValue);
         }
         else if(o.getClass().isArray()){
             for(int i = 0; i < Array.getLength(o); i++){
-                if(getDimensions(o) > 1 || !Array.get(o,i).getClass().isPrimitive()){
-                    Element obj2 = new Element("index");
-                    Object a = Array.get(o, i);
-                    Object[] dArr = ObjectCreatorReflective.checkPrimitive(a.getClass());
-                    recurseElements(a, dArr, obj2, root);
-                    obj.addContent(obj2);
+                Object a = Array.get(o, i);
+                if(a == null){
+                    Element nullEle = new Element("value");
+                    nullEle.addContent("null");
+                    doElement.addContent(nullEle);
+                    continue;
+                }
+                Object[] dArr = ObjectCreatorReflective.checkPrimitive(a.getClass());
+                if(getDimensions(o) > 1){
+                    Element ele2 = new Element("index");
+                    recurseElements(a, dArr, ele2, root, false);
+                    doElement.addContent(ele2);
+                }
+                //if primitive array
+                else if(dArr[0].equals(true)) {
+                    dArr = ObjectCreatorReflective.checkPrimitive(a.getClass());
+                    recurseElements(a, dArr, doElement, root, false);
                 }
                 else{
-                    Object a = Array.get(o, i);
-                    Object[] dArr = ObjectCreatorReflective.checkPrimitive(a.getClass());
-                    recurseElements(a, dArr, obj, root);
+                    Element refer = new Element("reference");
+                    if(!identityHashMap.containsKey(a)) {
+                        identityHashMap.put(a, this.counter);
+                        refer.addContent(String.valueOf(this.counter));
+                        this.counter++;
+                        doElement.addContent(refer);
+                        addObject(a, root);
+                    }
+                    else{
+                        refer.addContent(String.valueOf(identityHashMap.get(a)));
+                        doElement.addContent(refer);
+                    }
+
                 }
 
             }
@@ -120,7 +141,7 @@ public class Serializer {
                     primElements(mapValue, key.getClass().getName(), key);
                 }
                 else{
-                    recurseElements(key, dArr, mapValue, root);
+                    recurseElements(key, dArr, mapValue, root, false);
                 }
                 mapValue.addContent(",");
                 dArr = ObjectCreatorReflective.checkPrimitive(copy.get(key).getClass());
@@ -128,9 +149,9 @@ public class Serializer {
                     primElements(mapValue, copy.get(key).getClass().getName(), copy.get(key));
                 }
                 else{
-                    recurseElements(copy.get(key), dArr, mapValue, root);
+                    recurseElements(copy.get(key), dArr, mapValue, root, false);
                 }
-                obj.addContent(mapValue);
+                doElement.addContent(mapValue);
             }
         }
         else if(oName.equals("java.util.List") || oName.equals("java.util.ArrayList") || oName.equals("java.LinkedList")){
@@ -151,7 +172,7 @@ public class Serializer {
                     primElements(listValue, copy.get(i).getClass().getName(), copy.get(i));
                 }
                 else{
-                    recurseElements(copy.get(i), dArr, listValue, root);
+                    recurseElements(copy.get(i), dArr, listValue, root, false);
                 }
             }
         }
@@ -164,7 +185,7 @@ public class Serializer {
                     primElements(listValue, gh.getClass().getName(), gh);
                 }
                 else{
-                    recurseElements(gh, dArr, listValue, root);
+                    recurseElements(gh, dArr, listValue, root, false);
                 }
             }
 
@@ -184,7 +205,7 @@ public class Serializer {
                     primElements(listValue, dh.getClass().getName(), dh);
                 }
                 else{
-                    recurseElements(dh, dArr, listValue, root);
+                    recurseElements(dh, dArr, listValue, root, false);
                 }
             }
         }
@@ -210,7 +231,7 @@ public class Serializer {
                     primElements(listValue, jh.getClass().getName(), jh);
                 }
                 else{
-                    recurseElements(jh, dArr, listValue, root);
+                    recurseElements(jh, dArr, listValue, root, false);
                 }
             }
         }
@@ -225,27 +246,50 @@ public class Serializer {
                 field.setAttribute("declaringclass", declaringClasss);
                 if(f.get(o) == null){
                     field.addContent("null");
-                    obj.addContent(field);
+                    doElement.addContent(field);
                     continue;
                 }
-                if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
+                else if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
                     Element value = new Element("value");
                     value.addContent(f.get(o).toString());
                     field.addContent(value);
-                    obj.addContent(field);
+                    doElement.addContent(field);
                 }
                 else {
                     Element reference = new Element("reference");
-                    identityHashMap.put(f.get(o), counter);
-                    reference.addContent(String.valueOf(counter));
-                    obj.addContent(reference);
-                    addReferenceObject(f, o, root);
-                    counter++;
-
+                    if(identityHashMap.containsKey(f.get(o))){
+                        reference.addContent(String.valueOf(identityHashMap.get(f.get(o))));
+                        doElement.addContent(reference);
+                    }
+                    else{
+                        identityHashMap.put(f.get(o), this.counter);
+                        reference.addContent(String.valueOf(this.counter));
+                        this.counter++;
+                        doElement.addContent(reference);
+                        addReferenceObject(f, o, root);
+                    }
                 }
 
             }
         }
+    }
+
+    private void addObject(Object o, Element root) throws IllegalAccessException {
+        Element obj = new Element("object");
+        obj.setAttribute("class", o.getClass().getName());
+        obj.setAttribute("id", identityHashMap.get(o).toString());
+        if(o.getClass().isArray()){
+            obj.setAttribute("length", String.valueOf(Array.getLength(o)));
+        }
+        root.addContent(obj);
+        /*for(Field f : o.getClass().getDeclaredFields()) {
+            f.setAccessible(true);
+            Object fgeto = f.get(o);
+            Object[] oArr = ObjectCreatorReflective.checkPrimitive(fgeto.getClass());
+            recurseElements(fgeto, oArr, obj, root, false);
+        }*/
+        Object[] oArr = ObjectCreatorReflective.checkPrimitive(o.getClass());
+        recurseElements(o, oArr, obj, root, false);
     }
 
     public void primElements(Element primValue, String primName, Object o){
