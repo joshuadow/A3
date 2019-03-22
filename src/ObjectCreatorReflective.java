@@ -287,22 +287,7 @@ public class ObjectCreatorReflective {
                 copy.add(null);
             }
             for(int i = 0; i < size; i++){
-                if(checkPrimitive(component)[0].equals(true)){
-                    object = getPrimitive(component);
-                }
-                else {
-                    object = component.getConstructor(new Class[]{}).newInstance();
-                    for (Field f : object.getClass().getDeclaredFields()) {
-                        f.setAccessible(true);
-                        if (!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")) {
-                            notPrimitive(f, object, 0);
-                        } else if (f.getType().isArray()) {
-                            isAnArray(f, object);
-                        } else if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
-                            ObjectCreatorController.createPopUp(f, object, obj);
-                        }
-                    }
-                }
+                object = getObject(obj, component);
                 copy.set(i, object);
             }
             field.set(obj, copy);
@@ -327,43 +312,9 @@ public class ObjectCreatorReflective {
             }
             for(int i = 0; i < size; i++){
                 Object key = null;
-                if(checkPrimitive(keys)[0].equals(true)) {
-                    key = getPrimitive(keys);
-                }
-                else{
-                    key = keys.getConstructor(new Class[]{}).newInstance();
-                    for(Field f : key.getClass().getDeclaredFields()){
-                        f.setAccessible(true);
-                        if(!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")){
-                            notPrimitive(f, key, 0);
-                        }
-                        else if(f.getType().isArray()){
-                            isAnArray(f, key);
-                        }
-                        else if(f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
-                            ObjectCreatorController.createPopUp(f, key, obj);
-                        }
-                    }
-                }
+                key = getObject(obj, keys);
                 Object value = null;
-                if(checkPrimitive(values)[0].equals(true)){
-                    value = getPrimitive(values);
-                }
-                else{
-                    value = values.getConstructor(new Class[] {}).newInstance();
-                    for(Field f : value.getClass().getDeclaredFields()){
-                        f.setAccessible(true);
-                        if(!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")){
-                            notPrimitive(f, value, 0);
-                        }
-                        else if(f.getType().isArray()){
-                            isAnArray(f, value);
-                        }
-                        else if(f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
-                            ObjectCreatorController.createPopUp(f, value, obj);
-                        }
-                    }
-                }
+                value = getObject(obj, values);
                 copy.put(key,value);
             }
             field.set(obj, copy);
@@ -466,22 +417,7 @@ public class ObjectCreatorReflective {
                 copy.add(null);
             }
             for(int i = 0; i < size; i++) {
-                if(checkPrimitive(type)[0].equals(true)){
-                    key = getPrimitive(type);
-                }
-                else {
-                    key = type.getConstructor(new Class[]{}).newInstance();
-                    for (Field f : key.getClass().getDeclaredFields()) {
-                        f.setAccessible(true);
-                        if (!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")) {
-                            notPrimitive(f, key, 0);
-                        } else if (f.getType().isArray()) {
-                            isAnArray(f, key);
-                        } else if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
-                            ObjectCreatorController.createPopUp(f, key, obj);
-                        }
-                    }
-                }
+                key = getObject(obj, type);
                 copy.add(key);
             }
             field.set(obj, copy);
@@ -502,22 +438,7 @@ public class ObjectCreatorReflective {
             }
             Object key = null;
             for(int i = 0; i < size; i++) {
-                if(checkPrimitive(type)[0].equals(true)){
-                    key = getPrimitive(type);
-                }
-                else {
-                    key = type.getConstructor(new Class[]{}).newInstance();
-                    for (Field f : key.getClass().getDeclaredFields()) {
-                        f.setAccessible(true);
-                        if (!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")) {
-                            notPrimitive(f, key, 0);
-                        } else if (f.getType().isArray()) {
-                            isAnArray(f, key);
-                        } else if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
-                            ObjectCreatorController.createPopUp(f, key, obj);
-                        }
-                    }
-                }
+                key = getObject(obj, type);
                 copy.add(key);
             }
             field.set(obj, copy);
@@ -543,27 +464,32 @@ public class ObjectCreatorReflective {
             }
             Object key = null;
             for(int i = 0; i < size; i++) {
-                if(checkPrimitive(type)[0].equals(true)){
-                    key = getPrimitive(type);
-                }
-                else {
-                    key = type.getConstructor(new Class[]{}).newInstance();
-                    for (Field f : key.getClass().getDeclaredFields()) {
-                        f.setAccessible(true);
-                        if (!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")) {
-                            notPrimitive(f, key, 0);
-                        } else if (f.getType().isArray()) {
-                            isAnArray(f, key);
-                        } else if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
-                            ObjectCreatorController.createPopUp(f, key, obj);
-                        }
-                    }
-                }
+                key = getObject(obj, type);
                 copy.add(key);
             }
             field.set(obj, copy);
         }
 
+    }
+
+    private static Object getObject(Object obj, Class component) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, ClassNotFoundException {
+        Object object;
+        if (checkPrimitive(component)[0].equals(true)) {
+            object = getPrimitive(component);
+        } else {
+            object = component.getConstructor(new Class[]{}).newInstance();
+            for (Field f : object.getClass().getDeclaredFields()) {
+                f.setAccessible(true);
+                if (!f.getType().isPrimitive() && !f.getType().getName().equals("java.lang.String")) {
+                    notPrimitive(f, object, 0);
+                } else if (f.getType().isArray()) {
+                    isAnArray(f, object);
+                } else if (f.getType().isPrimitive() || f.getType().getName().equals("java.lang.String")) {
+                    ObjectCreatorController.createPopUp(f, object, obj);
+                }
+            }
+        }
+        return object;
     }
 
     public static Object[] checkPrimitive(Class cls) {

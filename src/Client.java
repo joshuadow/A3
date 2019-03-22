@@ -9,9 +9,9 @@ import java.util.ArrayList;
 
 public class Client {
 
-    private Socket socket            = null;
-    private BufferedReader input   = null;
-    private PrintWriter out     = null;
+    private Socket socket = null;
+    private BufferedReader input = null;
+    private PrintWriter out = null;
     private String ip = "";
     private int port = 0;
     public Client(String ip, int port) {
@@ -25,13 +25,9 @@ public class Client {
             out = new PrintWriter(socket.getOutputStream(), true);
             input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             System.out.println("Connected");
-            XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             try {
                 objectOutputStream.writeObject(docList);
-                /*for(Document d : docList) {
-                    //xout.output(d, out);
-                }*/
             } catch (IOException e) {
                 System.out.println("Could not send XML");
             }

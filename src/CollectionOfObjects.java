@@ -7,10 +7,8 @@ public class CollectionOfObjects {
     public CollectionOfObjects(){
         PrimitivesOnly po = new PrimitivesOnly();
         intList.add(1);
-        intList.add(7);
         list.add(po);
         hashMap.put(6, po);
-        hashMap.put(8, po);
     }
 
     @Override
