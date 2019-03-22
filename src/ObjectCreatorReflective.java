@@ -283,6 +283,9 @@ public class ObjectCreatorReflective {
             }
             Object object = null;
             Class component = Helper.guessComponents(copy);
+            while(copy.size() < size){
+                copy.add(null);
+            }
             for(int i = 0; i < size; i++){
                 if(checkPrimitive(component)[0].equals(true)){
                     object = getPrimitive(component);
@@ -316,8 +319,12 @@ public class ObjectCreatorReflective {
             } else {
                 copy = (Map<Object, Object>) field.get(obj);
             }
+
             Class keys = Helper.guessKeyComponents(copy);
             Class values = Helper.guessValueComponents(copy);
+            while(copy.size() < size){
+                copy.put(null,null);
+            }
             for(int i = 0; i < size; i++){
                 Object key = null;
                 if(checkPrimitive(keys)[0].equals(true)) {
@@ -455,6 +462,9 @@ public class ObjectCreatorReflective {
             };
             Class type = Helper.guessQueueComponents(copy);
             Object key = null;
+            while(copy.size() < size){
+                copy.add(null);
+            }
             for(int i = 0; i < size; i++) {
                 if(checkPrimitive(type)[0].equals(true)){
                     key = getPrimitive(type);
@@ -485,7 +495,11 @@ public class ObjectCreatorReflective {
             } else {
                 copy = (Deque) field.get(obj);
             }
+
             Class type = Helper.guessQueueComponents(copy);
+            while(copy.size() < size){
+                copy.add(null);
+            }
             Object key = null;
             for(int i = 0; i < size; i++) {
                 if(checkPrimitive(type)[0].equals(true)){
@@ -522,7 +536,11 @@ public class ObjectCreatorReflective {
             }
             else
                 copy = (Set<Object>) field.get(obj);
+
             Class type = Helper.guessSetComponents(copy);
+            while(copy.size() < size){
+                copy.add(null);
+            }
             Object key = null;
             for(int i = 0; i < size; i++) {
                 if(checkPrimitive(type)[0].equals(true)){

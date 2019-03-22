@@ -89,17 +89,7 @@ public class Helper {
         Class<?> guess = null;
         for (Object o : copy)
         {
-            if (o != null)
-            {
-                if (guess == null)
-                {
-                    guess = o.getClass();
-                }
-                else if (guess != o.getClass())
-                {
-                    guess = lowestCommonSuper(guess, o.getClass());
-                }
-            }
+            guess = insideForLoop(o);
         }
         return guess;
     }
@@ -121,22 +111,26 @@ public class Helper {
         return s;
     }
 
+    public static Class insideForLoop(Object o){
+        Class guess = null;
+        if (o != null)
+        {
+            if (guess == null)
+            {
+                guess = o.getClass();
+            }
+            else if (guess != o.getClass())
+            {
+                guess = lowestCommonSuper(guess, o.getClass());
+            }
+        }
+        return guess;
+    }
+
     public static Class guessKeyComponents(Map copy) {
         Class<?> guess = null;
         for (Object o : copy.keySet())
-        {
-            if (o != null)
-            {
-                if (guess == null)
-                {
-                    guess = o.getClass();
-                }
-                else if (guess != o.getClass())
-                {
-                    guess = lowestCommonSuper(guess, o.getClass());
-                }
-            }
-        }
+            guess = insideForLoop(o);
         return guess;
     }
 
@@ -144,17 +138,7 @@ public class Helper {
         Class<?> guess = null;
         for (Object o : copy.values())
         {
-            if (o != null)
-            {
-                if (guess == null)
-                {
-                    guess = o.getClass();
-                }
-                else if (guess != o.getClass())
-                {
-                    guess = lowestCommonSuper(guess, o.getClass());
-                }
-            }
+            guess = insideForLoop(o);
         }
         return guess;
     }
@@ -163,17 +147,7 @@ public class Helper {
         Class<?> guess = null;
         for (Object o : copy)
         {
-            if (o != null)
-            {
-                if (guess == null)
-                {
-                    guess = o.getClass();
-                }
-                else if (guess != o.getClass())
-                {
-                    guess = lowestCommonSuper(guess, o.getClass());
-                }
-            }
+            guess = insideForLoop(o);
         }
         return guess;
     }
@@ -182,17 +156,7 @@ public class Helper {
         Class<?> guess = null;
         for (Object o : copy)
         {
-            if (o != null)
-            {
-                if (guess == null)
-                {
-                    guess = o.getClass();
-                }
-                else if (guess != o.getClass())
-                {
-                    guess = lowestCommonSuper(guess, o.getClass());
-                }
-            }
+            guess = insideForLoop(o);
         }
         return guess;
     }
@@ -206,6 +170,8 @@ public class Helper {
             InputStreamReader inputStreamReader = new InputStreamReader(url_name.openStream());
             br = new BufferedReader(inputStreamReader);
             systemipaddress = br.readLine().trim();
+            inputStreamReader.close();
+            br.close();
         } catch (IOException | NullPointerException e) {
             systemipaddress = "localhost";
         }
